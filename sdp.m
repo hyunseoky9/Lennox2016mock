@@ -15,7 +15,7 @@ val = zeros([1,length(y)]);
 if n > 1
     for action = 1:length(y)
         if y(action) == 0 %don't buy
-            val(action) = 0; %sdp(b,x,y,r,n-1); %%%%%
+            val(action) = sdp(b,x,y,r,z,s_max,c_max,p,n-1); %%%%%
         elseif y(action) == 1 % buy
             val(action) = 0;
             for i = 1:s_max
@@ -23,7 +23,7 @@ if n > 1
                     g = j*(c_max-1)/c_max^2; %probability for conservation status determined by cost
                     term = nchoosek(s_max-1,i-1)*g^(i-1)*(1-g)^(s_max-i)*...
                         nchoosek(c_max-1,j-1)*p^(j-1)*(1-p)^(c_max-j)/r;
-                    val(action) = val(action) + term*i^z;%term*(i^z + sdp(b,x+i^z,y,r,z,s_max,c_max,p,n-1)); %%%%%%
+                    val(action) = val(action) + term*(i^z + sdp(b,x+i^z,y,r,z,s_max,c_max,p,n-1));
                 end
             end
         else % borrow (for later)

@@ -2,11 +2,11 @@
 b = 5;
 x = 0;
 y = [0,1];
-z = 1;
+z = 2;
 c_max = 10;
 s_max = 10;
 p = 0.2;
-n = 5; % 20 in the paper
+n = 4; % 20 in the paper
 r = 0;
 for i = 1:s_max
     for j = 1:b
@@ -15,5 +15,9 @@ for i = 1:s_max
             nchoosek(c_max-1,j-1)*p^(j-1)*(1-p)^(c_max-j);
     end
 end
+tic
 [bval,bact] = sdp(b,x,y,r,z,s_max,c_max,p,n);
-bact
+toc
+fprintf('n=%d\n',n);
+fprintf('bval=%.5f, bact=%d\n\n\n',bval,bact);
+
