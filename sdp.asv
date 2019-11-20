@@ -5,7 +5,7 @@ function [bestval,bestaction] = sdp(b,x,y,r,z,s_max,c_max,p,n)
 % x = state space; 1x2 array 
 % y = action space (0=no buy, 1= buy); 1x2 array
 % r = sum of all the possible probabilities of buying land with s=i, c=j;
-% p = probability for binom dist for cost
+% p = parameter vector; [z,s_max,c_max,p]
 % output:
 % n = number of times game is played
 % val = expected return by choosing an action at initial time; 1x2 array
@@ -22,8 +22,8 @@ if n > 1
                 for j = 1:c_max
                     g = j*(c_max-1)/c_max^2; %probability for conservation status determined by cost
                     term = nchoosek(s_max-1,i-1)*g^(i-1)*(1-g)^(c_max-i)*...
-                        nchoosek(c_max-1,j-1)*p^(j-1)*(1-p)^(s_max-j)/r;
-                    val(action) = val(action) + term*(i^z + sdp(b,x+i^z,y,r,z,s_max,c_max,p,n-1));
+                        nchoose(c_max-1,j-1)*p^(j-1)*(1-p)^(s_max-j)/r;
+                    val(action) = val(action) + term*(i^p(1) + sdp(b,x+i^p(1),y,r,p,n-1));
                 end
             end
         else % borrow (for later)
@@ -34,14 +34,7 @@ else
         if y(action) == 0
             val(action) = x;
         elseif y(action) == 1
-            for i = 1:s_max
-                for j = 1:c_max
-                    g = j*(c_max-1)/c_max^2; %probability for conservation status determined by cost
-                    term = nchoosek(s_max-1,i-1)*g^(i-1)*(1-g)^(c_max-i)*...
-                        nchoosek(c_max-1,j-1)*p^(j-1)*(1-p)^(s_max-j)/r;
-                    val(action) = val(action) + term*(i^z);
-                end
-            end
+            val(action) = x + r;
         else %borrow (for later)
         end
     end
