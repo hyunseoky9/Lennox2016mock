@@ -18,21 +18,18 @@ end
 optm = zeros([s_max,c_max,n]); %optimal action table given state vector and time
 bestvalarray = zeros([s_max,c_max]);
 bestvalarray_new = zeros([s_max,c_max]);
+tic
 for k = n:1
+	ss = sum(probm.*bestvalarray,'all');
 	for i = 1:s_max
 		for j = 1:c_max
 			if j > b
-				[bestvalarray_new(i,j),optm(i,j,k)] = findbest(b,j,i,d,[0],z,s_max,c_max,probm,n,bestvalarray);
+				[bestvalarray_new(i,j),optm(i,j,k)] = findbest(i,j,d,[0],z,ss,k);
 			else
-				[bestvalarray_new(i,j),optm(i,j,k)] = findbest(b,j,i,d,[0,1],z,s_max,c_max,probm,n,bestvalarray);
+				[bestvalarray_new(i,j),optm(i,j,k)] = findbest(i,j,d,[0,1],z,ss,k);
 			end
 		end
 	end
+	bestvalarray = bestvalarray_new;
 end
-
-
-tic
-[bval,bact] = sdp(b,x,y,r,z,s_max,c_max,probm,p,n);
 toc
-fprintf('n=%d\n',n);
-fprintf('bval=%.5f, bact=%d\n\n\n',bval,bact);
