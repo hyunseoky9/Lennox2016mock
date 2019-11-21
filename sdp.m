@@ -1,4 +1,3 @@
-%%WRONG
 function [bestval,bestaction] = sdp(b,x,y,r,z,s_max,c_max,probm,p,n) 
 %% function for stochastic dynamic programming
 % input:
