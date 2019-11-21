@@ -1,13 +1,10 @@
 %%command script for running sdp function
 b = 5;
-x = 0;
-y = [0,1];
-z = 2;
+z = 1;
 c_max = 10;
 s_max = 10;
 p = 0.2;
-n = 1; % 20 in the paper
-r = 0;
+n = 1; % 240 in the paper
 probm = zeros([s_max,c_max]);
 term = 0;
 for i = 1:s_max
@@ -18,8 +15,22 @@ for i = 1:s_max
         probm(i,j) = term;
     end
 end
-initbval = zeros([s_max,c_max]); %best value with given initial state variables element i,j is for s=i c=j
-initbact = zeros([s_max,c_max]); %same thing except for best action.
+optm = zeros([s_max,c_max,n]); %optimal action table given state vector and time
+bestvalarray = zeros([s_max,c_max]);
+bestvalarray_new = zeros([s_max,c_max]);
+for k = n:1
+	for i = 1:s_max
+		for j = 1:c_max
+			if j > b
+				[bestvalarray_new(i,j),optm(i,j,k)] = findbest(b,j,i,d,[0],z,s_max,c_max,probm,n,bestvalarray);
+			else
+				[bestvalarray_new(i,j),optm(i,j,k)] = findbest(b,j,i,d,[0,1],z,s_max,c_max,probm,n,bestvalarray);
+			end
+		end
+	end
+end
+
+
 tic
 [bval,bact] = sdp(b,x,y,r,z,s_max,c_max,probm,p,n);
 toc
