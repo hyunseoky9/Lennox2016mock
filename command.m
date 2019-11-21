@@ -1,3 +1,4 @@
+%git commit test
 %%command script for running sdp function
 %% create optm tensor that stores all the information for best action given state variable
 %% at certain timestep (size = c_max*s_max*n)
