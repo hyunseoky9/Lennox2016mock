@@ -7,7 +7,7 @@ c_max = 10;
 s_max = 10;
 d_max = b;% set to 0 if no borrowing allowed (fixed)
 p = 0.2;
-n = 240; % 240 in the paper
+n = 10; % 240 in the paper
 
 probm = zeros([s_max,c_max]);
 term = 0;
@@ -25,38 +25,47 @@ bestvalarray_new = zeros([s_max,c_max,d_max+1]);
 tic
 for k = n:-1:1
 	for m = 0:d_max % element-wise multiplication between s.c.proability matrix and bestval matrix with fixed debt column.
-		bestvalarray(:,:,m) = probm.*bestvalarray(:,:,m);
+		bestvalarray(:,:,m+1) = probm.*bestvalarray(:,:,m+1);
+	end
+	if k==8
+		for aa = 0:d_max
+			disp(sum(bestvalarray(:,:,aa+1),'all'));
+		end
+		%disp(bestvalarray(:,:,:))
 	end
 	for i = 1:s_max
 		for j = 1:c_max
 			for l = 0:d_max
 				repay = ceil(l/3); % repayment for the debt carried over from last step
 				netbudget = b - repay; % net budget after paying repayment
-				if netbudget + (d_max - (l-repay)) >= c % if you can buy with borrowing
-					if netbudget >= c % calculation for probability different depending on borrowing or not
+				if netbudget + (d_max - (l-repay)) >= j % if you can buy with borrowing
+					if netbudget >= j % calculation for probability different depending on borrowing or not
 						% next step debt variable will only have left over debt
-						ss = sum(bestvalarray(:,:,l-repay),'all'); 
+						ss = sum(bestvalarray(:,:,l-repay+1),'all'); 
 					else
 						% next step d will have left over + borrowed $ this step.
-						ss = sum(bestvalarray(:,:,l-repay+(c-netbudget)),'all'); 
+						ss = sum(bestvalarray(:,:,l-repay+(j-netbudget)+1),'all'); 
 					end
-					[bestvalarray_new(i,j,l-repay),optm(i,j,l-repay,k)] = findbest(i,[0,1],z,ss);
+					[bestvalarray_new(i,j,l+1),optm(i,j,l+1,k)] = findbest(i,[0,1],z,ss);
 				else % if you can't buy even with borrowing maximum amount allowed
-					ss = sum(bestvalarray(:,:,l-repay),'all');
-					[bestvalarray_new(i,j,l-repay),optm(i,j,l-repay,k)] = findbest(i,[0],z,ss);
+					ss = sum(bestvalarray(:,:,l-repay+1),'all');
+					[bestvalarray_new(i,j,l+1),optm(i,j,l+1,k)] = findbest(i,[0],z,ss);
 				end
 			end
 		end
 	end
+%	if k==9
+%		disp(bestvalarray_new)
+%	end
 	bestvalarray = bestvalarray_new;
 end
 toc
 %write out optm into csv file
-fileID = fopen('optimal_aciton.csv','w');
-for k = 1:n
-	for j=1:c_max
-
-		fprintf(fileID,'a');
-	end
-end
-fclose(fileID);
+%fileID = fopen('optimal_aciton.csv','w');
+%for k = 1:n
+%	for j=1:c_max
+%
+%		fprintf(fileID,'a');
+%	end
+%end
+%fclose(fileID);
