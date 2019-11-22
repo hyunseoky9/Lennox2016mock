@@ -24,16 +24,24 @@ bestvalarray = zeros([s_max,c_max,d_max+1]);
 bestvalarray_new = zeros([s_max,c_max,d_max+1]);
 tic
 for k = n:-1:1
-	ss = sum(probm.*bestvalarray(:,:,SOMETHING_HERE),'all');
+	for m = 0:d_max % element-wise multiplication between s.c.proability matrix and bestval matrix with fixed debt column.
+		bestvalarray(:,:,m) = probm.*bestvalarray(:,:,m);
+	end
 	for i = 1:s_max
 		for j = 1:c_max
 			for l = 0:d_max
-				repay = ceil(l/3);
-				netbudget = b - repay;
-				if netbudget + d_max >= c % can buy
-					[bestvalarray_new(i,j,l-repay),optm(i,j,l-repay,k)] = findbest(i,j,l-repay,[0,1],z,ss,k,);
-				elseif netbudget < c
-					[bestvalarray_new(i,j,l-repay),optm(i,j,l-repay,k)] = findbest(i,j,l,[0],z,ss,k);
+				repay = ceil(l/3); % repayment for the debt carried over from last step
+				netbudget = b - repay; % net budget after paying repayment
+				if netbudget + (d_max - (l-repay)) >= c % if you can buy with borrowing
+					if netbudget >= c % calculation for probability different depending on borrowing or not
+						ss = sum(bestvalarray(:,:,l-repay),'all'); % next step debt variable will only have left over debt
+					else
+						ss = sum(bestvalarray(:,:,l-repay+(c-netbudget)),'all'); % next step d will have left over + borrowed $ this step.
+					end
+					[bestvalarray_new(i,j,l-repay),optm(i,j,l-repay,k)] = findbest(i,[0,1],z,ss);
+				else % if you can't buy even with borrowing maximum amount allowed
+					ss = sum(bestvalarray(:,:,l-repay),'all');
+					[bestvalarray_new(i,j,l-repay),optm(i,j,l-repay,k)] = findbest(i,[0],z,ss);
 				end
 			end
 		end
@@ -41,8 +49,6 @@ for k = n:-1:1
 	bestvalarray = bestvalarray_new;
 end
 toc
-%disp(bestvalarray);
-%disp(optm);
 %write out optm into csv file
 fileID = fopen('optimal_aciton.csv','w');
 for k = 1:n
@@ -51,5 +57,4 @@ for k = 1:n
 		fprintf(fileID,'a');
 	end
 end
-
 fclose(fileID);

@@ -1,4 +1,4 @@
-function [bestval,bestaction] = findbest(s,c,d,y,z,ss,n)
+function [bestval,bestaction] = findbest(s,y,z,ss)
 %% update optimal action matrix and best value for the given state and time.
 % input:
 % c = cost; scalar (state variable 2)
