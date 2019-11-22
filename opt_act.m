@@ -5,7 +5,11 @@ b = 5; % budget
 z = 1; % conservation value parameter (conservation value) = (conservation status)^z
 c_max = 10; % maximum cost of a parcel allowed (in $100,000 in the paper)
 s_max = 10; % maximum cons. status of a parcel allowed
-d_max = b; % maximum debt allowed to accrue. set to 0 if no borrowing allowed (fixed)
+MODEL = 0; % 0=fixed model 1=borrow model
+if MODEL
+	d_max = b; % maximum debt allowed to accrue. set to 0 if no borrowing allowed (fixed)
+else
+	d_max = 0;
 p = 0.2; % probability parameter in the binomial distribution that chooses parcel cost
 n = 10; % 240 in the paper
 probm = zeros([s_max,c_max]); % pre-calculation of probabilities of parcel character probm(2,3) = Pr(s=2,c=3)
