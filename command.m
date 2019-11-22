@@ -1,4 +1,3 @@
-%git commit test
 %%command script for running sdp function
 %% create optm tensor that stores all the information for best action given state variable
 %% at certain timestep (size = c_max*s_max*n)
@@ -6,6 +5,7 @@ b = 5;
 z = 1;
 c_max = 10;
 s_max = 10;
+d_max = b;% set to 0 if no borrowing allowed (fixed)
 p = 0.2;
 n = 240; % 240 in the paper
 
@@ -19,18 +19,22 @@ for i = 1:s_max
         probm(i,j) = term;
     end
 end
-optm = zeros([s_max,c_max,n]); %optimal action table given state vector and time
-bestvalarray = zeros([s_max,c_max]);
-bestvalarray_new = zeros([s_max,c_max]);
+optm = zeros([s_max,c_max,d_max+1,n]); %optimal action table given state vector and time
+bestvalarray = zeros([s_max,c_max,d_max+1]);
+bestvalarray_new = zeros([s_max,c_max,d_max+1]);
 tic
 for k = n:-1:1
-	ss = sum(probm.*bestvalarray,'all');
+	ss = sum(probm.*bestvalarray(:,:,SOMETHING_HERE),'all');
 	for i = 1:s_max
 		for j = 1:c_max
-			if j > b
-				[bestvalarray_new(i,j),optm(i,j,k)] = findbest(i,j,d,[0,2],z,ss,k);
-			else
-				[bestvalarray_new(i,j),optm(i,j,k)] = findbest(i,j,d,[0,1],z,ss,k);
+			for l = 0:d_max
+				repay = ceil(l/3);
+				netbudget = b - repay;
+				if netbudget + d_max >= c % can buy
+					[bestvalarray_new(i,j,l-repay),optm(i,j,l-repay,k)] = findbest(i,j,l-repay,[0,1],z,ss,k,);
+				elseif netbudget < c
+					[bestvalarray_new(i,j,l-repay),optm(i,j,l-repay,k)] = findbest(i,j,l,[0],z,ss,k);
+				end
 			end
 		end
 	end
