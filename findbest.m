@@ -20,9 +20,6 @@ for action = 1:length(y)
 		val(action) = 0 + ss;
     elseif y(action) == 1 % buy
 		val(action) = s^z + ss;
-	else % borrow and buy
-		foo = 1;
-		%do it later
 	end
 end
 [bestval,bestaction] = max(val);

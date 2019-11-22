@@ -34,9 +34,11 @@ for k = n:-1:1
 				netbudget = b - repay; % net budget after paying repayment
 				if netbudget + (d_max - (l-repay)) >= c % if you can buy with borrowing
 					if netbudget >= c % calculation for probability different depending on borrowing or not
-						ss = sum(bestvalarray(:,:,l-repay),'all'); % next step debt variable will only have left over debt
+						% next step debt variable will only have left over debt
+						ss = sum(bestvalarray(:,:,l-repay),'all'); 
 					else
-						ss = sum(bestvalarray(:,:,l-repay+(c-netbudget)),'all'); % next step d will have left over + borrowed $ this step.
+						% next step d will have left over + borrowed $ this step.
+						ss = sum(bestvalarray(:,:,l-repay+(c-netbudget)),'all'); 
 					end
 					[bestvalarray_new(i,j,l-repay),optm(i,j,l-repay,k)] = findbest(i,[0,1],z,ss);
 				else % if you can't buy even with borrowing maximum amount allowed
