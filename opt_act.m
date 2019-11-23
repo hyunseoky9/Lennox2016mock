@@ -1,17 +1,18 @@
+function optm = opt_act(b,z,c_max,s_max,d_max,p,n)
 %%command script for running sdp function
 %% create optm tensor that stores all the information for best action given state variable
 %% at certain timestep (size = c_max*s_max*n)
-b = 5; % budget
-z = 1; % conservation value parameter (conservation value) = (conservation status)^z
-c_max = 10; % maximum cost of a parcel allowed (in $100,000 in the paper)
-s_max = 10; % maximum cons. status of a parcel allowed
-MODEL = 0; % 0=fixed model 1=borrow model
-if MODEL
-	d_max = b; % maximum debt allowed to accrue. set to 0 if no borrowing allowed (fixed)
-else
-	d_max = 0;
-p = 0.2; % probability parameter in the binomial distribution that chooses parcel cost
-n = 10; % 240 in the paper
+%input:
+%b=budget
+%z=conservation value parameter
+%c_max=maximum cost of parcel
+%s_max=maximum cons status of parcel
+%d_max=maximum debt (0 if fixed model)
+%p=cost probability parameter
+%n=timestep
+%output:
+%probm=bestaction tensor given state variables and time
+
 probm = zeros([s_max,c_max]); % pre-calculation of probabilities of parcel character probm(2,3) = Pr(s=2,c=3)
 term = 0;
 for i = 1:s_max % calculating probm matrix
