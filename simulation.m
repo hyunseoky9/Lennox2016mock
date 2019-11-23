@@ -1,6 +1,6 @@
 % simulation script. Uses function opt_act
 % output of the script is the mean conservation value for borrowing and fixed model
-% set parameter and RUN!
+% set parameter values and RUN!
 
 %%%%%%% parameters to set%%%%%%%%%%
 b_default = 5; % budget
@@ -44,6 +44,7 @@ for mo = 1:2 % run sim 2 times with dif model
 	modval(mo) = modval_accum/rep; % mean overall value throughout time recorded per model
 end
 
+% print out results
 fprintf("\n\nmean conservation value by model\n");
 fprintf("fixed = %.3f\n",modval(1));
 fprintf("borrow = %.3f\n",modval(2));
