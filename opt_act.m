@@ -26,7 +26,6 @@ end
 optm = zeros([s_max,c_max,d_max+1,n]); %optimal action table given state vector and time
 bestvalarray = zeros([s_max,c_max,d_max+1]); % best value obtainable at a given time step
 bestvalarray_new = zeros([s_max,c_max,d_max+1]);
-tic % timer
 % calculation of optm through backwards recursion
 for k = n:-1:1 
 	for m = 0:d_max % element-wise multiplication between probm and bestval matrix with fixed debt column.
@@ -64,9 +63,9 @@ for k = n:-1:1
 %	end
 	bestvalarray = bestvalarray_new;
 end
-toc % timer end
-%write out optm into csv file
 
+
+%write out optm into csv file
 %% can later develop more to output the optimal action into csv 
 %% for now computation time is super short so no need.
 %fileID = fopen('optimal_aciton.csv','w');
