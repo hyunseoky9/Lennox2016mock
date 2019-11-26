@@ -4,24 +4,25 @@
 
 %%%%%%% parameters to set%%%%%%%%%%
 b_default = 5; % budget
-z = 1; % conservation value parameter (conservation value) = (conservation status)^z
+z = 2; % conservation value parameter (conservation value) = (conservation status)^z
 c_max = 10; % maximum cost of a parcel allowed (in $100,000 in the paper)
 s_max = 10; % maximum cons. status of a parcel allowed
-d_max = b; % maximum debt allowed to accrue. set to 0 if no borrowing allowed (fixed)
-p = 0.2; % probability parameter in the binomial distribution that chooses parcel cost
-n = 10; % 240 in the paper
+d_max = b_default; % maximum debt allowed to accrue. set to 0 if no borrowing allowed (fixed)
+p = 0.8; % probability parameter in the binomial distribution that chooses parcel cost
+n = 240; % 240 in the paper
 rep = 1000; %  simulation rep num
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-modval = [0 0]; % model value calculator at the end
-for mo = 1:2 % run sim 2 times with dif model
+modvalm = [0 0]; % model value mean calculator at the end
+modvalstd = [0 0]; % model value std at the end
+for mo = 2:2 % run sim 2 times with dif model
 	if mo == 1 % fixed
 		d_max = 0;
 	else % borrow
 		d_max = b;
 	end
 	optm = opt_act(b_default,z,c_max,s_max,d_max,p,n); % get best action space
-	modval_accum = 0;
+	modval_accum = zeros([1000,1]);
 	for i = 1:rep % simulation start
 		modvalpt = 0; % model value calculator per time
 		d = 0; % initial debt 0
@@ -39,12 +40,16 @@ for mo = 1:2 % run sim 2 times with dif model
 				end
 			end
 		end
-		modval_accum = modval_accum + modvalpt;
+		modval_accum(i) = modvalpt;
 	end
-	modval(mo) = modval_accum/rep; % mean overall value throughout time recorded per model
+	modvalm(mo) = mean(modval_accum); % mean overall value throughout time recorded per model
+	modvalstd(mo) = std(modval_accum);
 end
 
 % print out results
-fprintf("\n\nmean conservation value by model\n");
-fprintf("fixed = %.3f\n",modval(1));
-fprintf("borrow = %.3f\n",modval(2));
+fprintf("\n\nmean and 1std confidence interval of conservation value by model\n");
+fprintf("fixed mean= %.3f\n",modvalm(1));
+fprintf("borrow mean= %.3f\n",modvalm(2));
+fprintf("fixed C.I. = (%.3f, %.3f)\n",modvalm(1)-modvalstd(1),modvalm(1)+modvalstd(1));
+fprintf("borrow C.I.= (%.3f, %.3f)\n",modvalm(2)-modvalstd(2),modvalm(2)+modvalstd(2));
+

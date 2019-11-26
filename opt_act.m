@@ -31,28 +31,31 @@ for k = n:-1:1
 	for m = 0:d_max % element-wise multiplication between probm and bestval matrix with fixed debt column.
 		bestvalarray(:,:,m+1) = probm.*bestvalarray(:,:,m+1);
 	end
-	%if k==8
-	%	for aa = 0:d_max
-	%		disp(sum(bestvalarray(:,:,aa+1),'all'));
-	%	end
-	%	%disp(bestvalarray(:,:,:))
-	%end
+	if k==200
+		fprintf('at t=%d\n',k);
+		for aa = 0:d_max
+			fprintf("E(Rt+1)|(d=%d) = %.3f\n",aa,sum(bestvalarray(:,:,aa+1),'all'));
+		end
+		%disp(bestvalarray(:,:,:))
+	end
 	for i = 1:s_max
 		for j = 1:c_max
 			for l = 0:d_max
+				ss = zeros([2,1]);
 				repay = ceil(l/3); % repayment for the debt carried over from last step
 				netbudget = b - repay; % net budget after paying repayment
 				if netbudget + (d_max - (l-repay)) >= j % if you can buy with borrowing
 					if netbudget >= j % calculation for probability different depending on borrowing or not
 						% next step debt variable will only have left over debt
-						ss = sum(bestvalarray(:,:,l-repay+1),'all'); 
+						ss(1) = sum(bestvalarray(:,:,l-repay+1),'all'); 
 					else
 						% next step d will have left over + borrowed $ this step.
-						ss = sum(bestvalarray(:,:,l-repay+(j-netbudget)+1),'all'); 
+						ss(1) = sum(bestvalarray(:,:,l-repay+(j-netbudget)+1),'all'); 
 					end
+					ss(2) = sum(bestvalarray(:,:,l-repay+1,'all'); 
 					[bestvalarray_new(i,j,l+1),optm(i,j,l+1,k)] = findbest(i,[0,1],z,ss);
 				else % if you can't buy even with borrowing maximum amount allowed
-					ss = sum(bestvalarray(:,:,l-repay+1),'all');
+					ss(2) = sum(bestvalarray(:,:,l-repay+1),'all');
 					[bestvalarray_new(i,j,l+1),optm(i,j,l+1,k)] = findbest(i,[0],z,ss);
 				end
 			end
