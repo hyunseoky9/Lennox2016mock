@@ -9,7 +9,7 @@ c_max = 10; % maximum cost of a parcel allowed (in $100,000 in the paper)
 s_max = 10; % maximum cons. status of a parcel allowed
 d_max = b_default; % maximum debt allowed to accrue. set to 0 if no borrowing allowed (fixed)
 p = 0.2; % probability parameter in the binomial distribution that chooses parcel cost
-n = 240; % 240 in the paper
+n = 240; % time step. 240 in the paper
 rep = 1000; %  simulation rep num
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
