@@ -32,10 +32,10 @@ fprintf("simulation parameters:\n");
 fprintf("...");
 modvalm = zeros([1 numo]); % model value mean calculator at the end
 modvalstd = zeros([1 numo]; % model value std at the end
+[x,y] = autoregression(t,s,o,coef,x0,y0);
 for mo = 1:numo % run sim 2 times with dif model
 	modval_accum = zeros([1000,1]);
 	for i = 1:rep % simulation start
-		[x,y] = autoregression(t,s,o,coef,x0,y0);
 		modvalpt = 0; % model value calculator per time
 		d = 0; % initial debt 0
 		for t = 1:n
