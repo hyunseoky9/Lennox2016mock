@@ -13,17 +13,17 @@ n = 240; % time step. 240 in the paper
 rep = 1000; %  simulation rep num
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-eoptm = ones([10 10 6]); % expected optm for every time step based on the observation seen so far...
-for i = 2:6
-	for j = i-1:-1:1
-		eoptm(:,10-(j-1),i) = 0;
-	end
-end
+% eoptm = ones([10 10 6]); % expected optm for every time step based on the observation seen so far...
+% for i = 2:6
+% 	for j = i-1:-1:1
+% 		eoptm(:,10-(j-1),i) = 0;
+% 	end
+% end
 
 fprintf("b=%d, z=%d, c_max=%d, s_max=%d, d_max=%d, p=%f, n=%d, rep=%d\n",b_default,z,c_max,s_max,d_max,p,n,rep);
 modvalm = [0 0]; % model value mean calculator at the end
 modvalstd = [0 0]; % model value std at the end
-for mo = 2:2 % run sim 2 times with dif model
+for mo = 1:2 % run sim 2 times with dif model
 	if mo == 1 % fixed
 		d_max = 0;
 	else % borrow
@@ -53,13 +53,15 @@ for mo = 2:2 % run sim 2 times with dif model
 	modvalm(mo) = mean(modval_accum); % mean overall value throughout time recorded per model
 	modvalstd(mo) = std(modval_accum);
 end
-[~,~,~,numt] = size(optm);
-for i = 1:numt
-	if isequal(optm(:,:,:,i),eoptm)
-		foo=1;
-	else
-		disp("it's not the same?!!");
-	end
+
+% testing
+% [~,~,~,numt] = size(optm);
+% for i = 1:numt
+% 	if isequal(optm(:,:,:,i),eoptm)
+% 		foo=1;
+% 	else
+% 		disp("it's not the same?!!");
+% 	end
 
 end
 
