@@ -52,7 +52,8 @@ for k = n:-1:1
 						% next step d will have left over + borrowed $ this step.
 						ss(1) = sum(bestvalarray(:,:,l-repay+(j-netbudget)+1),'all'); 
 					end
-					ss(2) = sum(bestvalarray(:,:,l-repay+1,'all'); 
+					ss(2) = sum(bestvalarray(:,:,l-repay+1),'all'); 
+					%ss(2) = ss(1);
 					[bestvalarray_new(i,j,l+1),optm(i,j,l+1,k)] = findbest(i,[0,1],z,ss);
 				else % if you can't buy even with borrowing maximum amount allowed
 					ss(2) = sum(bestvalarray(:,:,l-repay+1),'all');
