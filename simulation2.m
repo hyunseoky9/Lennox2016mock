@@ -23,6 +23,7 @@ tj = 0; % conversion time of the parcel that's out for sell
 numo = 5; % number of heuristics method
 rho = 0; % economic discount rate 
 del = 0; % ecological discount rate
+base_s = 0; % baseline s
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 fprintf("AR params:\n");
 fprintf("t=%d, o=%d, s=%.2f\n",T,o,s);
@@ -43,9 +44,9 @@ for mo = 1:numo % run sim 2 times with dif model
 			er = normrnd(eru,ersd);
 			tj = ;% conversion time
 			c = ;% something
-			s = ef + 2*efsd;
-			if s < 0
-				s = 0;
+			s = ef + 2*efsd + base_s;
+			if ef + 2*efsd < 0
+				s = base_s;
 			end
 			be = normrnd(0,1);
 			b = x + be; % budget
