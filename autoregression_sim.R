@@ -81,7 +81,7 @@ for ( j in 1)
   }
 }
 
-sprintf('analytic ff mean = %f',(lf*(1-af)*f0r)/(1-af*lf) + ff0r) #analytic ff mean
+sprintf('analytic ff mean = %f', ff0r) #analytic ff mean
 sprintf('simulation ff mean = %f',mean(ff[200:800])) #simulation mean
 
 sprintf('analytic f mean = %f',f0r) #analytic ff mean

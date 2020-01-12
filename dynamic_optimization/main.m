@@ -1,0 +1,80 @@
+clear all
+rng(1);
+pw= [600,625]; %plot window
+t = linspace(1,800,800); % time
+
+%general economy
+a = 0.8;
+f0r = 30;
+f0 = f0r*(1-a);
+sig = 10*(1-a^2);
+
+%forestry
+lf = 0.7; %lambda
+af = 0.4;
+ff0r = 25;
+ff0 = ff0r*(1-lf*af);
+sigf = 4*(1-lf^2*af^2);
+factorf = lf*(1-af)*f0r/(1-af*lf);
+%housing
+lr = 0.7;
+ar = 0.1;
+fr0r = 25;
+fr0 = fr0r*(1-lr*ar);
+sigr = 2*(1-lr^2*ar^2);
+
+%donation
+lb = 0.7;
+ab = 0.9;
+fb0r = 25;
+fb0 = fb0r*(1-lb*ab);
+sigb = 4*(1-lb^2*ab^2);
+
+for j = 1
+  f = zeros(0,length(t));
+  for  i = 1:length(t)
+    if i == 1
+      f(i) = (f0 + normrnd(0,1));
+    else
+      f(i) = a*f(i-1) + (f0 + sig*normrnd(0,1));
+    end
+  end
+  ff = zeros(1,length(t));
+  fr = zeros(1,length(t));
+  fb = zeros(1,length(t));
+  for i = 1:length(t)
+    if i == 1
+      ff(i) = (ff0 + sigf*normrnd(0,1));
+      fb(i) = (fb0 + sigb*normrnd(0,1));
+      f(i) = (fr0 + sigr*normrnd(0,1));
+    else
+      ff(i) = lf*(af*ff(i-1) + (1-af)*(f(i) - f0r)) + (ff0 + sigf*normrnd(0,1));
+      fb(i) = lb*(ab*fb(i-1) + (1-ab)*(f(i) - f0r)) + (fb0 + sigb*normrnd(0,1));
+      fr(i) = lr*(ar*fr(i-1) + (1-ar)*(f(i) - f0r)) + (fr0 + sigr*normrnd(0,1));
+    end
+  end
+  plot(t(pw(1):pw(2)),f(pw(1):pw(2)));
+  xlabel('time');
+  ylabel('net return');
+  hold on
+  plot(t(pw(1):pw(2)),ff(pw(1):pw(2)));
+  plot(t(pw(1):pw(2)),fr(pw(1):pw(2)));
+  plot(t(pw(1):pw(2)),fb(pw(1):pw(2)));
+  legend('f','ff','fr','fb');
+  hold off
+end
+
+fprintf('\n');
+fprintf('analytic ff mean = %f\n', ff0r) %analytic ff mean
+fprintf('simulation ff mean = %f\n',mean(ff(200:800))) %simulation mean
+
+fprintf('analytic f mean = %f\n',f0r) %analytic ff mean
+fprintf('simulation f mean = %f\n',mean(f(200:800))) %simulation mean
+fprintf('\n');
+cor = corrcoef(ff,f);
+fprintf("cor(ff,f)= %.2f\n",cor(1,2))
+cor = corrcoef(fr,f);
+fprintf("cor(fr,f)= %.2f\n",cor(1,2))
+cor = corrcoef(fb,f);
+fprintf("cor(fb,f)= %.2f\n",cor(1,2))
+
