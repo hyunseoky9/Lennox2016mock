@@ -86,6 +86,8 @@ fb = fb(burnin:end);
 fr = fr(burnin:end);
 
 simtime = 1; % number of buying opportunities
+fund = 0; % money saved
+cumcval = 0;
 for i = 1:simtime
   f = f(i:end);
   ff = ff(i:end);
@@ -141,8 +143,15 @@ for i = 1:simtime
   % evaluating and buying process
   al = 1;
   be = 1;
-  fund = ??
+  threshold =0;
   cval = (B/c)^al*fund^be; % conservation value
+  if cval >= threshold % buy
+    cumcval = cumcval + B;
+  else % save
+    fund = fund + fb(1);
+  end
 
 end
+
+fprintf('cumcval = %.2f',cumcval)';
 
