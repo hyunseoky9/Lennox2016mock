@@ -1,3 +1,10 @@
+% t_j when overall real estate value is higher than overall forestry value. 
+% different method of generating f_f f_r and b. 
+% 1) current random autoregression one for forestry and another for real estate.
+% 2) one autoregression for general economy and forestry, real estate, and budget are causal to the gen. economy.
+% 3) make periodic function for forestry, real estate, and budget, and have a parameter that mess with their phase (review ode)
+%		Also, make parameters for amplitude and cycle center for each value function.
+%  1 not advisable. Let's go with 2 and 3.
 
 %%%%%%%% parameters %%%%%%%%%
 %autoregression params%%%
