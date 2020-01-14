@@ -160,5 +160,7 @@ commit1 = 0;
 commit2 = 1;
 commit3 = 2;
 
+whatsup = 0;
+
 fprintf('cumcval = %.2f',cumcval)';
 
