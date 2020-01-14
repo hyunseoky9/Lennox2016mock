@@ -156,13 +156,7 @@ for i = 1:simtime
     fund = fund + fb(1);
   end
 end
-commit1 = 0;
-commit2 = 1;
-commit3 = 2;
 
-whatsup = 0;
-whatsup2 = 1;
-whatsup3 = 2;
 
 fprintf('cumcval = %.2f',cumcval)';
 
