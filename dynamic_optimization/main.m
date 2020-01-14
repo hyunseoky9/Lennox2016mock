@@ -158,6 +158,7 @@ for i = 1:simtime
 end
 
 donk = 0;
+donk2 = 1;
 
 fprintf('cumcval = %.2f',cumcval)';
 
