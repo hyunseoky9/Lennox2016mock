@@ -158,6 +158,7 @@ for i = 1:simtime
 end
 
 commit1 = 0;
+commit2 = 1;
 
 fprintf('cumcval = %.2f',cumcval)';
 
