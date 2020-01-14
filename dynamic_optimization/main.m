@@ -1,8 +1,8 @@
 clear all
 rng(1);
 pw= [600,625]; %plot window
-t = linspace(1,800,800); % time % this is a test comment
-test = 0;
+t = linspace(1,800,800); % time 
+
 
 %general economy
 a = 0.8;
@@ -151,7 +151,7 @@ for i = 1:simtime
   else % save
     fund = fund + fb(1);
   end
-
+test = 0;
 end
 
 fprintf('cumcval = %.2f',cumcval)';
