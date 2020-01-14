@@ -148,7 +148,7 @@ for i = 1:simtime
   if cval >= threshold % buy
     cumcval = cumcval + B;
   else % save
-    fund = fund + fb(1);
+    fund = fund + fb(1); % this is for master
   end
 
 end
