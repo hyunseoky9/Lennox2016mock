@@ -1,7 +1,8 @@
 clear all
 rng(1);
 pw= [600,625]; %plot window
-t = linspace(1,800,800); % time
+t = linspace(1,800,800); % time % this is a test comment
+test = 0;
 
 %general economy
 a = 0.8;
