@@ -157,12 +157,9 @@ for i = 1:simtime
   end
 end
 
-<<<<<<< HEAD
 commit1 = 0;
 commit2 = 1;
 commit3 = 2;
-=======
->>>>>>> parent of 16aeb33... commit1
 
 fprintf('cumcval = %.2f',cumcval)';
 
