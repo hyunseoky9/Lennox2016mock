@@ -1,7 +1,13 @@
 clear all
 rng(1);
 pw= [600,625]; %plot window
+<<<<<<< HEAD
 t = linspace(1,800,800); 
+=======
+t = linspace(1,800,800); % time 
+
+
+>>>>>>> test
 %general economy
 a = 0.8;
 f0r = 30;
@@ -149,7 +155,11 @@ for i = 1:simtime
   else % save
     fund = fund + fb(1);
   end
+<<<<<<< HEAD
 mater = 0;
+=======
+test = 0;
+>>>>>>> test
 end
 
 fprintf('cumcval = %.2f',cumcval)';
