@@ -155,8 +155,6 @@ for i = 1:simtime
   else % save
     fund = fund + fb(1);
   end
-mater = 0;
-test = 0;
 end
 
 fprintf('cumcval = %.2f',cumcval)';
