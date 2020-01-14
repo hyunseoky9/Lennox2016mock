@@ -159,6 +159,7 @@ end
 
 commit1 = 0;
 commit2 = 1;
+commit3 = 2;
 
 fprintf('cumcval = %.2f',cumcval)';
 
