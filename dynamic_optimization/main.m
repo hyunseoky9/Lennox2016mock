@@ -64,19 +64,19 @@ for j = 1
   hold off
 end
 
-fprintf('\n');
-fprintf('analytic ff mean = %f\n', ff0r) %analytic ff mean
-fprintf('simulation ff mean = %f\n',mean(ff(200:800))) %simulation mean
+%fprintf('\n');
+%fprintf('analytic ff mean = %f\n', ff0r) %analytic ff mean
+%fprintf('simulation ff mean = %f\n',mean(ff(200:800))) %simulation mean
 
-fprintf('analytic f mean = %f\n',f0r) %analytic ff mean
-fprintf('simulation f mean = %f\n',mean(f(200:800))) %simulation mean
-fprintf('\n');
+%fprintf('analytic f mean = %f\n',f0r) %analytic ff mean
+%fprintf('simulation f mean = %f\n',mean(f(200:800))) %simulation mean
+%fprintf('\n');
 cor = corrcoef(ff,f);
-fprintf("cor(ff,f)= %.2f\n",cor(1,2))
+%fprintf("cor(ff,f)= %.2f\n",cor(1,2))
 cor = corrcoef(fr,f);
-fprintf("cor(fr,f)= %.2f\n",cor(1,2))
+%fprintf("cor(fr,f)= %.2f\n",cor(1,2))
 cor = corrcoef(fb,f);
-fprintf("cor(fb,f)= %.2f\n",cor(1,2))
+%fprintf("cor(fb,f)= %.2f\n",cor(1,2))
 
 %% simulation
 burnin = 201; % burn in first few values of net return as they have not converged yet
@@ -85,16 +85,25 @@ ff = ff(burnin:end);
 fb = fb(burnin:end);
 fr = fr(burnin:end);
 
-simtime = 1; % number of buying opportunities
+simtime = 50; % number of buying opportunities
 fund = 0; % money saved
-cumcval = 0;
+cumcval = 0; % cummulative conservation value
+
+
+bfn = 1; % benefit fn scheme. 1=constant, 2=normal var correlated to e_fj, 3=non-linear fn of 2
 for i = 1:simtime
-  f = f(i:end);
-  ff = ff(i:end);
-  fb = fb(i:end);
-  fr = fr(i:end);
+  fprintf('time step=%d\n',i);
+  
+  if i > 1
+    f = f(2:end);
+    ff = ff(2:end);
+    fb = fb(2:end);
+    fr = fr(2:end);
+  end
+  %fprintf('length of fb=%d\n',size(fb,2));
+  %fprintf('this yrs donation = %.2f\n',fb(1));
   fund = fund + fb(1); % add this yr's fund to the account
-  bfn = 1; % benefit fn scheme. 1=constant, 2=normal var correlated to e_fj, 3=non-linear fn of 2
+  
 
   e_rj = normrnd(0,0); % indiv dev var
   efmu = 0;
@@ -125,7 +134,10 @@ for i = 1:simtime
     t_j = t_j + 1;
     tjoptim = sum((f_rj(t_j:end)-f_fj(t_j:end))./edisc(1:(end-t_j+1)));
   end
-  
+  if t_j > 1
+      fprintf('tj was bigger than 1 on step %d; t_j=%d\n',i,t_j);
+      
+  end
   % cost
   if t_j == 1
     c = sum(f_rj(t_j:end)./edisc(t_j:end));
@@ -147,11 +159,17 @@ for i = 1:simtime
   be = 1;
   threshold =0;
   cval = (B/c)^al*fund^be; % conservation value
-  if cval >= threshold % buy
+  if cval >= threshold && c <= fund % buy
     cumcval = cumcval + B;
+    fund = fund - c;
+    fprintf('bought!\n');
+    fprintf('remaining fund=%.2f\n',fund);
+  else
+    fprintf('cost=%.2f',c);
+    fprintf('remaining fund=%.2f\n',fund);
   end
 end
 
 
-fprintf('cumcval = %.2f',cumcval);
+fprintf('cumcval = %.2f\n',cumcval);
 
