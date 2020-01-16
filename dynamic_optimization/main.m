@@ -91,73 +91,80 @@ cumcval = 0; % cummulative conservation value
 
 
 bfn = 1; % benefit fn scheme. 1=constant, 2=normal var correlated to e_fj, 3=non-linear fn of 2
+
+rho = 0.1; % economic discount rate
+del = 0.01; % ecological discount rate
+
+
+efmu = 0; % mean of ef
+efsig2 = 1; % var of ef
+
+edisc = repelem(1+rho,length(f)).^(0:(length(f)-1)); %economic discount rate.
+ecodisc = repelem(1+del,length(f)).^(0:(length(f)-1)); %ecological discount rate
+al = 1;
+be = 1;
+threshold =0;
+
 for i = 1:simtime
   fprintf('time step=%d\n',i);
   
-  if i > 1
-    f = f(2:end);
-    ff = ff(2:end);
-    fb = fb(2:end);
-    fr = fr(2:end);
-  end
+  nf = f(i:end);
+  nff = ff(i:end);
+  nfb = fb(i:end);
+  nfr = fr(i:end);
   %fprintf('length of fb=%d\n',size(fb,2));
   %fprintf('this yrs donation = %.2f\n',fb(1));
-  fund = fund + fb(1); % add this yr's fund to the account
+  fund = fund + nfb(1); % add this yr's fund to the account
   
-
+  % getting e_fj,e_rj, and b (if bfn=2)
+  mu = [efmu 10];
+  sigma = [efsig2 1.5; 1.5 1];
+  R = mvnrnd(mu,sigma,1);
+  e_fj = R(1); % indiv forest var
   e_rj = normrnd(0,0); % indiv dev var
-  efmu = 0;
-  efsig = 1;
+
   if bfn == 1
-    e_fj = normrnd(efmu,efsig);
+    e_fj = normrnd(efmu,efsig2);
     b = 10;
-  else
-    mu = [efmu 10];
-    sigma = [efsig 1.5; 1.5 1];
-    R = mvnrnd(mu,sigma,1);
-    e_fj = R(1); % indiv forest var
+  else if bfn >= 2
     b = R(2); % for benefit
   end
-  f_fj = ff + e_fj;
+  if bfn == 3
+    b = b^(1/2);
+  end
+  f_fj = nff + e_fj;
   f_fj(f_fj<0) = 0;
-  f_rj = fr + e_rj;
+  f_rj = nfr + e_rj;
   f_rj(f_rj<0) = 0;
 
-  rho = 0.1; % economic discount rate
-  del = 0.01; % ecological discount rate
 
   % getting clearing time t_j
   t_j = 1;
-  edisc = repelem(1+rho,length(f)).^(0:(length(f)-1)); %economic discount rate.
-  tjoptim = sum((f_rj(t_j:end)-f_fj(t_j:end))./edisc(1:(end-t_j+1)));
+  nedisc = edisc(1:end-i+1); % new economic discount rate for this sim.
+  tjoptim = sum((f_rj(t_j:end)-f_fj(t_j:end))./nedisc(1:(end-t_j+1)));
   while tjoptim <= 0
+    tjoptim = tjoptim - (f_rj(t_j)-f_fj(t_j))/nedisc(t_j)
     t_j = t_j + 1;
-    tjoptim = sum((f_rj(t_j:end)-f_fj(t_j:end))./edisc(1:(end-t_j+1)));
   end
+
   if t_j > 1
       fprintf('tj was bigger than 1 on step %d; t_j=%d\n',i,t_j);
-      
   end
+  
   % cost
   if t_j == 1
-    c = sum(f_rj(t_j:end)./edisc(t_j:end));
+    c = sum(f_rj(t_j:end)./nedisc(t_j:end));
   else
-    c = sum(f_fj(1:(t_j-1))./edisc(1:(t_j-1))) + sum(f_rj(t_j:end)./edisc(t_j:end));
+    c = sum(f_fj(1:(t_j-1))./nedisc(1:(t_j-1))) + sum(f_rj(t_j:end)./nedisc(t_j:end));
   end
   %v = f_rj(t_j:end)./edisc(t_j:end);
   %disp(v(1:15))
   %benefit
-  if bfn == 3
-    b = b^(1/2);
-  end
-  ecodisc = repelem(1+del,length(f)).^(0:(length(f)-1)); %ecological discount rate
-  B = sum(b./ecodisc(t_j:end)); % conservation value (incl' discount and threat component)
+  necodisc = ecodisc(1:end-i+1); %ecological discount rate
+  B = sum(b./necodisc(t_j:end)); % conservation value (incl' discount and threat component)
   %v = b./ecodisc(t_j:end);
   %disp(v(1:15));
   % evaluating and buying process
-  al = 1;
-  be = 1;
-  threshold =0;
   cval = (B/c)^al*fund^be; % conservation value
   if cval >= threshold && c <= fund % buy
     cumcval = cumcval + B;
