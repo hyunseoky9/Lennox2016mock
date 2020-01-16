@@ -118,7 +118,7 @@ for i = 1:simtime
   
   % getting e_fj,e_rj, and b (if bfn=2)
   mu = [efmu 10];
-  sigma = [efsig2 1.5; 1.5 1];
+  sigma = [efsig2 0.8; 0.8 1];
   R = mvnrnd(mu,sigma,1);
   e_fj = R(1); % indiv forest var
   e_rj = normrnd(0,0); % indiv dev var
@@ -126,7 +126,7 @@ for i = 1:simtime
   if bfn == 1
     e_fj = normrnd(efmu,efsig2);
     b = 10;
-  else if bfn >= 2
+  elseif bfn >= 2
     b = R(2); % for benefit
   end
   if bfn == 3
@@ -143,7 +143,7 @@ for i = 1:simtime
   nedisc = edisc(1:end-i+1); % new economic discount rate for this sim.
   tjoptim = sum((f_rj(t_j:end)-f_fj(t_j:end))./nedisc(1:(end-t_j+1)));
   while tjoptim <= 0
-    tjoptim = tjoptim - (f_rj(t_j)-f_fj(t_j))/nedisc(t_j)
+    tjoptim = tjoptim - (f_rj(t_j)-f_fj(t_j))/nedisc(t_j);
     t_j = t_j + 1;
   end
 
@@ -179,4 +179,3 @@ end
 
 
 fprintf('cumcval = %.2f\n',cumcval);
-
