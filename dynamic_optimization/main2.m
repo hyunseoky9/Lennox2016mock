@@ -144,7 +144,7 @@ for god = 1:godsim
   buy = [];
   mcval = [Inf 0];
   cvalm = 0;
-
+  %% tj and cost 
   for i = 1:simtime
     %fprintf('time step=%d\n',i);
     
@@ -204,20 +204,24 @@ for god = 1:godsim
     C(i) = c;
     %v = f_rj(t_j:end)./edisc(t_j:end);
     %disp(v(1:15))
+  %% benefit and buying
     %benefit
     necodisc = ecodisc(1:end-i+1); %ecological discount rate
     B = sum(b./necodisc(t_j:end)); % conservation value (incl' discount and threat component)
     ben(i) = B;
     %v = b ./ecodisc(t_j:end);
     %disp(v(1:15));
-    
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % evaluating and buying process
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    [cumb,fund,buy] = buystrat(buy,code,cumb,fund,B,c,cvalth,Lc,Hc,Lff,Hff,Lfr,Hfr,Lf,Hf);
-     
+  end
+  cint = max(C)-min(C);
+  Lc = min(C) + cint/3;
+  Hc = Lc + cint/3;
+  
+  %% evaluating and buying process
+  for i = 1:simtime    
+    [cumb,fund,buy] = buystrat(buy,code,cumb,fund,ben(i),C(i),cvalth,Lc,Hc,Lff,Hff,Lfr,Hfr,Lf,Hf);
   end
 
+  %% calculate correlation btw f and C,ben, tjs.
   %fprintf("corelations between f and C,B,tj\n");
   cor = corrcoef(f(1:simtime),C);
   mfCcor = mfCcor + cor(1,2);
@@ -234,7 +238,7 @@ for god = 1:godsim
   %fprintf('mincval = %.2f, maxcval = %.2f\n',mcval(1),mcval(2));
   %fprintf("mean cval = %.2f\n",cvalm/simtime);
   %fprintf('buy=%d \n',find(buy > 0));
-  
+
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   % PLOTTING
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
