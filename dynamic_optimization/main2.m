@@ -1,16 +1,13 @@
 clear all
-godsim = 1;
 mftjcor = 0;
 mfCcor = 0;
 mfBcor = 0;
-
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Constant Parameters 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%rng(1);
+rng(1);
 pw= [600,625]; %plot window
 t = linspace(1,800,800);
 
@@ -46,6 +43,13 @@ fb0 = fb0r*(1-lb*ab);
 fbsig2 = 4;
 sigb = fbsig2*(1-lb^2*ab^2);
 
+% buy strategy stuff
+code = 1:9;
+al = 1;
+be = 1;
+
+godsim = length(code)*100;
+strcumb = zeros(1,length(code)); % strategy's cumulative benefit
 for god = 1:godsim
 
   f = zeros(0,length(t));
@@ -118,10 +122,8 @@ for god = 1:godsim
   Lf = norminv(1/3,f0r,fsig2^(1/2)); % threshold for low f
   Hf = norminv(2/3,f0r,fsig2^(1/2)); % threshold for high f
   cvalth = 80; % buying threshold for buystrat code 1
-  Lc = Inf;
-  Hc = 0;
 
-  simtime = 50; % number of buying opportunities
+  simtime = 100; % number of buying opportunities
   fund = 0; % money saved
   cumb = 0; % cummulative conservation value
 
@@ -154,8 +156,6 @@ for god = 1:godsim
     nfr = fr(i:end);
     %fprintf('length of fb=%d\n',size(fb,2));
     %fprintf('this yrs donation = %.2f\n',fb(1));
-    fund = fund + nfb(1); % add this yr's fund to the account
-    
     % getting e_fj,e_rj, and b (if bfn=2)
    
 
@@ -213,14 +213,21 @@ for god = 1:godsim
     %disp(v(1:15));
   end
   cint = max(C)-min(C);
-  Lc = min(C) + cint/3;
-  Hc = Lc + cint/3;
+  Lc = min(C) + cint/3; % low threshold for cost
+  Hc = Lc + cint/3; % high threshold for cost
+
+  E = C./ben; % roi ratio
+  Eint = max(E) - min(E);
+  LE = min(E) + Eint/3;
+  HE = LE + Eint/3;
   
   %% evaluating and buying process
-  for i = 1:simtime    
-    [cumb,fund,buy] = buystrat(buy,code,cumb,fund,ben(i),C(i),cvalth,Lc,Hc,Lff,Hff,Lfr,Hfr,Lf,Hf);
+  for i = 1:simtime
+    fund = fund + fb(i); % add this yr's fund to the account
+    [cumb,fund,buy] = buystrat(buy,code(mod(god,length(code))+1),cumb,fund,fb(i),ben(i),C(i),E(i),ff(i),fr(i),al,be,cvalth,Lc,Hc,Lff,Hff,Lfr,Hfr,Lf,Hf,LE,HE);
   end
-
+  strcumb(mod(god,length(code))+1) = strcumb(mod(god,length(code))+1) + cumb;
+  fprintf("cumb=%.2f\n",cumb);
   %% calculate correlation btw f and C,ben, tjs.
   %fprintf("corelations between f and C,B,tj\n");
   cor = corrcoef(f(1:simtime),C);
@@ -288,8 +295,15 @@ for god = 1:godsim
     plot(t(1:simtime),C);%.2f\n',cor(1,2));
     legend('land cost')
   end
+  fprintf("god=%d\n",god);
 end
 
-fprintf('mean of cor(f,C)=%.2f\n',mfCcor/godsim);
-fprintf('mean of cor(f,B)=%.2f\n',mfBcor/godsim);
-fprintf('mean of cor(f,tj)=%.2f\n',mftjcor/godsim);
+strcumb = strcumb/(godsim/length(code));
+fprintf("str     mean cumb\n");
+for i = 1:length(strcumb)
+  fprintf("%d       %.2f\n",i,strcumb(i));
+end
+% fprintf('mean of cor(f,C)=%.2f\n',mfCcor/godsim);
+% fprintf('mean of cor(f,B)=%.2f\n',mfBcor/godsim);
+% fprintf('mean of cor(f,tj)=%.2f\n',mftjcor/godsim);
+    
