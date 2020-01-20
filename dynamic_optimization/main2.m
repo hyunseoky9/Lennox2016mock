@@ -117,6 +117,9 @@ for god = 1:godsim
   Hfr = norminv(2/3,Efr,Vfr^(1/2)); % threshold for high fr
   Lf = norminv(1/3,f0r,fsig2^(1/2)); % threshold for low f
   Hf = norminv(2/3,f0r,fsig2^(1/2)); % threshold for high f
+  cvalth = 80; % buying threshold for buystrat code 1
+  Lc = Inf;
+  Hc = 0;
 
   simtime = 50; % number of buying opportunities
   fund = 0; % money saved
@@ -134,7 +137,6 @@ for god = 1:godsim
   ecodisc = repelem(1+del,length(f)).^(0:(length(f)-1)); %ecological discount rate
   al = 1;
   be = 1;
-  threshold = 80;
 
   C = zeros(1,simtime);
   ben = zeros(1,simtime);
@@ -173,10 +175,10 @@ for god = 1:godsim
     if bfn == 3
       b = b^(1/2);
     end
-    f_fj = nff + e_fj;
-    f_fj(f_fj<0) = 0;
-    f_rj = nfr + e_rj;
-    f_rj(f_rj<0) = 0;
+    f_fj = nff + e_fj; 
+    f_fj(f_fj<0) = 0; % j's ff
+    f_rj = nfr + e_rj; 
+    f_rj(f_rj<0) = 0; % j's fr
 
 
     % getting clearing time t_j
@@ -199,6 +201,7 @@ for god = 1:godsim
     else
       c = sum(f_fj(1:(t_j-1))./nedisc(1:(t_j-1))) + sum(f_rj(t_j:end)./nedisc(t_j:end));
     end
+    C(i) = c;
     %v = f_rj(t_j:end)./edisc(t_j:end);
     %disp(v(1:15))
     %benefit
@@ -207,30 +210,34 @@ for god = 1:godsim
     ben(i) = B;
     %v = b ./ecodisc(t_j:end);
     %disp(v(1:15));
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % evaluating and buying process
-    cval = (B/c)^al*nfb(1)^be; % conservation value
-    cvalm = cvalm + cval;
-    if cval >= mcval(2)
-      mcval(2) = cval;
-    end
-    if cval <= mcval(1)
-      mcval(1) = cval;
-    end
-
-    if cval >= threshold && c <= fund % buy
-      cumb = cumb + B;
-      fund = fund - c;
-      buy = [buy 1];
-      %fprintf('bought at t=%d, cval=%.2f\n',i,cval);
-      %fprintf('remaining fund=%.2f\n',fund);
-    else
-      buy = [buy 0];
-      %fprintf('cost=%.2f',c);
-      %fprintf('remaining fund=%.2f\n',fund);
-    end
-    C(i) = c;
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    [cumb,fund,buy] = buystrat(buy,code,cumb,fund,B,c,cvalth,Lc,Hc,Lff,Hff,Lfr,Hfr,Lf,Hf);
+     
   end
 
+  %fprintf("corelations between f and C,B,tj\n");
+  cor = corrcoef(f(1:simtime),C);
+  mfCcor = mfCcor + cor(1,2);
+  %fprintf('cor(f,C)=%.2f\n',cor(1,2));
+  cor = corrcoef(f(1:simtime),ben);
+  mfBcor = mfBcor + cor(1,2);
+  %fprintf('cor((f(1:simtime),tjs);
+  cor = corrcoef(f(1:simtime),tjs);
+  mftjcor = mftjcor + cor(1,2);
+  %fprintf('cor(f,tj)=%.2f\n',cor(1,2));
+  %fprintf('\n');
+
+  %fprintf('cumb = %.2f\n',cumb);
+  %fprintf('mincval = %.2f, maxcval = %.2f\n',mcval(1),mcval(2));
+  %fprintf("mean cval = %.2f\n",cvalm/simtime);
+  %fprintf('buy=%d \n',find(buy > 0));
+  
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  % PLOTTING
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   plot = 0;
   if plot == 1
     tiledlayout(3,1)
@@ -277,24 +284,6 @@ for god = 1:godsim
     plot(t(1:simtime),C);%.2f\n',cor(1,2));
     legend('land cost')
   end
-
-
-  %fprintf("corelations between f and C,B,tj\n");
-  cor = corrcoef(f(1:simtime),C);
-  mfCcor = mfCcor + cor(1,2);
-  %fprintf('cor(f,C)=%.2f\n',cor(1,2));
-  cor = corrcoef(f(1:simtime),ben);
-  mfBcor = mfBcor + cor(1,2);
-  %fprintf('cor((f(1:simtime),tjs);
-  cor = corrcoef(f(1:simtime),tjs);
-  mftjcor = mftjcor + cor(1,2);
-  %fprintf('cor(f,tj)=%.2f\n',cor(1,2));
-  %fprintf('\n');
-
-  %fprintf('cumb = %.2f\n',cumb);
-  %fprintf('mincval = %.2f, maxcval = %.2f\n',mcval(1),mcval(2));
-  %fprintf("mean cval = %.2f\n",cvalm/simtime);
-  %fprintf('buy=%d \n',find(buy > 0));
 end
 
 fprintf('mean of cor(f,C)=%.2f\n',mfCcor/godsim);
