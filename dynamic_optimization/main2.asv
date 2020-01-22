@@ -7,7 +7,7 @@ mfBcor = 0;
 % Constant Parameters 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%rng(1);
+rng(1);
 pw= [600,625]; %plot window
 t = linspace(1,800,800);
 
@@ -20,19 +20,19 @@ sig = fsig2*(1-a^2);
 
 %forestry
 lf = 0.7; %lambda
-af = 0;
+af = 0.6;
 ff0r = 25;
 ff0 = ff0r*(1-lf*af);
-ffsig2 = 0.1;
+ffsig2 = 4;
 sigf = ffsig2*(1-lf^2*af^2);
 factorf = lf*(1-af)*f0r/(1-af*lf);
 
 %housing
 lr = 0.7;
-ar = 0;
+ar = 0.2;
 fr0r = 25;
 fr0 = fr0r*(1-lr*ar);
-frsig2 = 0.1;
+frsig2 = 2;
 sigr = frsig2*(1-lr^2*ar^2);
 
 %donation
@@ -48,43 +48,32 @@ code = 1:9;
 al = 1;
 be = 1;
 
-godsim = 1;%length(code)*2;
+godsim = length(code)*2;
 strcumb = zeros(1,length(code)); % strategy's cumulative benefit
 for god = 1:godsim
 
   f = zeros(0,length(t));
+  for  i = 1:length(t)
+    if i == 1
+      f(i) = (f0 + normrnd(0,1));
+    else
+      f(i) = a*f(i-1) + (f0 + sig*normrnd(0,1));
+    end
+  end
   ff = zeros(1,length(t));
   fr = zeros(1,length(t));
   fb = zeros(1,length(t));
-  regsin = 1 % 0=autoregression 1=sinusoidal (for ff,fr,fb)
-  if regsin == 1   
-    for  i = 1:length(t)
-      if i == 1
-        f(i) = (f0 + normrnd(0,1));
-      else
-        f(i) = a*f(i-1) + (f0 + sig*normrnd(0,1));
-      end
+  for i = 1:length(t)
+    if i == 1
+      ff(i) = (ff0 + sigf*normrnd(0,1));
+      fb(i) = (fb0 + sigb*normrnd(0,1));
+      f(i) = (fr0 + sigr*normrnd(0,1));
+    else
+      ff(i) = lf*(af*ff(i-1) + (1-af)*(f(i) - f0r)) + (ff0 + sigf*normrnd(0,1));
+      fb(i) = lb*(ab*fb(i-1) + (1-ab)*(f(i) - f0r)) + (fb0 + sigb*normrnd(0,1));
+      fr(i) = lr*(ar*fr(i-1) + (1-ar)*(f(i) - f0r)) + (fr0 + sigr*normrnd(0,1));
     end
-
-    for i = 1:length(t)
-      if i == 1
-        ff(i) = (ff0 + sigf*normrnd(0,1));
-        fb(i) = (fb0 + sigb*normrnd(0,1));
-        f(i) = (fr0 + sigr*normrnd(0,1));
-      else
-        ff(i) = lf*(af*ff(i-1) + (1-af)*(f(i) - f0r)) + (ff0 + sigf*normrnd(0,1));
-        fb(i) = lb*(ab*fb(i-1) + (1-ab)*(f(i) - f0r)) + (fb0 + sigb*normrnd(0,1));
-        fr(i) = lr*(ar*fr(i-1) + (1-ar)*(f(i) - f0r)) + (fr0 + sigr*normrnd(0,1));
-      end
-    end
-  else
-    period = 10;
-    f = f0r + cos(2*pi*(1:length(t))/period-pi/2);
-    ff = ff0r + cos(2*pi*(1:length(t))/period);
-    fr = fr0r + cos(2*pi*(1:length(t))/period-pi/2);
-    fb = fb0r + cos(2*pi*(1:length(t))/period-pi/2);
   end
-
   %plot(t(pw(1):pw(2)),f(pw(1):pw(2)));
   %xlabel('time');
   %ylabel('net return');
@@ -146,8 +135,6 @@ for god = 1:godsim
   efmu = 0; % mean of ef
   efsig2 = 0; % var of ef
 
-  ch = 2; % land change cost and option value
-
   edisc = repelem(1+rho,length(f)).^(0:(length(f)-1)); %economic discount rate.
   ecodisc = repelem(1+del,length(f)).^(0:(length(f)-1)); %ecological discount rate
   al = 1;
@@ -197,7 +184,7 @@ for god = 1:godsim
     % getting clearing time t_j
     t_j = 1;
     nedisc = edisc(1:end-i+1); % new economic discount rate for this sim.
-    tjoptim = sum((f_rj(t_j:end)-f_fj(t_j:end))./nedisc(1:(end-t_j+1))) - ch;
+    tjoptim = sum((f_rj(t_j:end)-f_fj(t_j:end))./nedisc(1:(end-t_j+1)));
     while tjoptim <= 0 && t_j <= length(f_fj)
       tjoptim = tjoptim - (f_rj(t_j)-f_fj(t_j))/nedisc(t_j);
       t_j = t_j + 1;
@@ -237,8 +224,7 @@ for god = 1:godsim
   %% evaluating and buying process
   for i = 1:simtime
     fund = fund + fb(i); % add this yr's fund to the account
-    [cumb,fund,buy] = buystrat(buy,code(8),cumb,fund,fb(i),ben(i),C(i),E(i),ff(i),fr(i),al,be,cvalth,Lc,Hc,Lff,Hff,Lfr,Hfr,Lf,Hf,LE,HE);
-    %[cumb,fund,buy] = buystrat(buy,code(mod(god,length(code))+1),cumb,fund,fb(i),ben(i),C(i),E(i),ff(i),fr(i),al,be,cvalth,Lc,Hc,Lff,Hff,Lfr,Hfr,Lf,Hf,LE,HE);
+    [cumb,fund,buy] = buystrat(buy,code(mod(god,length(code))+1),cumb,fund,fb(i),ben(i),C(i),E(i),ff(i),fr(i),al,be,cvalth,Lc,Hc,Lff,Hff,Lfr,Hfr,Lf,Hf,LE,HE);
   end
   strcumb(mod(god,length(code))+1) = strcumb(mod(god,length(code))+1) + cumb;
   fprintf("cumb=%.2f\n",cumb);
@@ -263,69 +249,62 @@ for god = 1:godsim
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   % PLOTTING
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  plotting = 1;
-  if plotting == 1
-    what2pl = [0,5];
-    tiledlayout(length(what2pl),1)
-    for pl = 1:length(what2pl)
-      if what2pl(pl) == 0 % ff, fr
-        nexttile
-        plot(t(1:simtime),ff(1:simtime));
-        xlabel('time');
-        ylabel('net return');
-        hold on
-        plot(t(1:simtime),fr(1:simtime));
-        legend('ff','fr');
-        hold off
-      elseif what2pl(pl) == 1 %f, ff, fr, fb
-        nexttile
-        plot(t(1:simtime),f(1:simtime));
-        xlabel('time');
-        ylabel('net return');
-        hold on
-        plot(t(1:simtime),ff(1:simtime));
-        plot(t(1:simtime),fr(1:simtime));
-        plot(t(1:simtime),fb(1:simtime));
-        legend('f','ff','fr','fb');
-        hold off
-      elseif what2pl(pl) == 2 % fr-ff & f
-        nexttile
-        plot(t(1:simtime),(fr(1:simtime)-ff(1:simtime)));
-        plot(t(1:simtime),f(1:simtime));
-        xlabel('time');
-        ylabel('net return');
+  plot = 0;
+  if plot == 1
+    tiledlayout(3,1)
+    nexttile
+    what2pl = 0;
 
-      elseif what2pl(pl) == 3 % f
-        nexttile 
-        plot(1:simtime,f(1:simtime));
-        legend('f')
-      elseif what2pl(pl) == 4 % c
-        %land cost
-        nexttile
-        plot(t(1:simtime),C);%.2f\n',cor(1,2));
-        legend('land cost')
-      else 
-        nexttile
-        histogram(tjs);
-      end
+    if what2pl == 0 % ff, fr
+      plot(t(1:simtime),ff(1:simtime));
+      xlabel('time');
+      ylabel('net return');
+      hold on
+      plot(t(1:simtime),fr(1:simtime));
+      legend('ff','fr');
+      hold off
+    elseif what2pl == 1 %f, ff, fr, fb
+      plot(t(1:simtime),f(1:simtime));
+      xlabel('time');
+      ylabel('net return');
+      hold on
+      plot(t(1:simtime),ff(1:simtime));
+      plot(t(1:simtime),fr(1:simtime));
+      plot(t(1:simtime),fb(1:simtime));
+      legend('f','ff','fr','fb');
+      hold off
+    else % fr-ff & f
+      plot(t(1:simtime),(fr(1:simtime)-ff(1:simtime)));
+      plot(t(1:simtime),f(1:simtime));
+      xlabel('time');
+      ylabel('net return');
     end
+
+    nexttile 
+    plot(t(1:simtime),f(1:simtime));
+    legend('f')
+      
 
     % buying points
     %nexttile
     %scatter(t(1:simtime),buy);
     %legend('buying points')
 
+    %land cost
+    nexttile
+    plot(t(1:simtime),C);%.2f\n',cor(1,2));
+    legend('land cost')
   end
   fprintf("god=%d\n",god);
 end
 
 strcumb = strcumb/(godsim/length(code));
 fprintf("str     mean cumb\n");
-stratstr = {'CVAL','Lc','Hc','Lff','Hff','Lfr','Hfr','LE','HE'};
+stratstr = {['HE'] ['CVAL'] ['Lc'] ['Hc'] ['Lff'] ['Hff'] ['Lfr'] ['Hfr','LE'};
 for i = 1:length(strcumb)
-  fprintf("%s       %.2f\n",stratstr{i},strcumb(i));
+  fprintf("%d       %.2f\n",i,strcumb(i));
 end
 % fprintf('mean of cor(f,C)=%.2f\n',mfCcor/godsim);
 % fprintf('mean of cor(f,B)=%.2f\n',mfBcor/godsim);
 % fprintf('mean of cor(f,tj)=%.2f\n',mftjcor/godsim);
-fprintf("mean tj=%.2f\n",sum(tjs)/simtime);
+    

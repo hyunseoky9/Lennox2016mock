@@ -10,7 +10,7 @@ function [cumb,fund,buy] = buystrat(buy,code,cumb,fund,don,B,c,E,ff,fr,al,be,cva
 %% 6 = buy when fr low
 %% 7 = buy when fr high
 %% 8 = buy when E low
-%% 0 = buy when E high
+%% 9 = buy when E high
 %% don = this year's donation
 %% output
 %% cumb = cumulative benefit
