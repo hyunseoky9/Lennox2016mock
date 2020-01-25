@@ -1,7 +1,8 @@
 clear all
 
 %rng(1);
-timeline = 1600;
+
+timeline = 800;
 %general economy
 a = 0.8;
 f0r = 30;
@@ -10,32 +11,32 @@ fsig2 = 10;
 sig = fsig2*(1-a^2);
 
 %forestry
-lf = 1; %lambda
-af = 0.28;
+lf = 0.7; %lambda
+af = 0.4;
 ff0r = 25;
 ff0 = ff0r*(1-lf*af);
-ffsig2 = 4;
+ffsig2 = 2;
 sigf = ffsig2*(1-lf^2*af^2);
 factorf = lf*(1-af)*f0r/(1-af*lf);
 
 %housing
-lr = 1;
-ar = 0.28;
+lr = 0.7;
+ar = 0.4;
 fr0r = 25;
 fr0 = fr0r*(1-lr*ar);
-frsig2 = 4;
+frsig2 = 2;
 sigr = frsig2*(1-lr^2*ar^2);
 
 %donation
-lb = 1;
-ab = 0.63;
+lb = 0.7;
+ab = 0.9;
 fb0r = 25;
 fb0 = fb0r*(1-lb*ab);
-fbsig2 = 4;
+fbsig2 = 2;
 sigb = fbsig2*(1-lb^2*ab^2);
 
 % buy strategy stuff
-codenum = 1;
+codenum = 9;
 al = 1;
 be = 1;
 
@@ -49,7 +50,7 @@ burnin = 201; % burn in first few values of net return as they have not converge
 
 cvalth = 80; % buying threshold for buystrat code 1
 
-simtime = 1000; % number of buying opportunities
+simtime = 100; % number of buying opportunities
 fund = 0; % money saved
 cumb = 0; % cummulative conservation value
 
@@ -73,7 +74,6 @@ cumb,bfn,rho,del,efmu,efsig2,ermu,ersig2,ch,b_def];
 
 receptacle = mainsim(param);
 strcumb = receptacle{1};
-ff = receptacle{2};
 fprintf("str     mean cumb\n");
 stratstr = {'CVAL','Lc','Hc','Lff','Hff','Lfr','Hfr','LE','HE'};
 for i = 1:length(strcumb)

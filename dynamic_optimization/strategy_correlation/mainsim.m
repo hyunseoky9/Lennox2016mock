@@ -253,7 +253,7 @@ for god = 1:godsim
   % PLOTTING
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   plotting = 1;
-  if plotting == 1
+  if plotting == 0
     what2pl = [5,6];
     tiledlayout(length(what2pl),1)
     for pl = 1:length(what2pl)
