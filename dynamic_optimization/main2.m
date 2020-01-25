@@ -8,8 +8,8 @@ mfBcor = 0;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %rng(1);
-pw= [600,625]; %plot window
-t = linspace(1,800,800);
+timeline = 10000;
+t = linspace(1,timeline,timeline);
 
 %general economy
 a = 0.8;
@@ -20,19 +20,19 @@ sig = fsig2*(1-a^2);
 
 %forestry
 lf = 0.7; %lambda
-af = 0;
+af = 0.4;
 ff0r = 25;
 ff0 = ff0r*(1-lf*af);
-ffsig2 = 0.1;
+ffsig2 = 4;
 sigf = ffsig2*(1-lf^2*af^2);
 factorf = lf*(1-af)*f0r/(1-af*lf);
 
 %housing
 lr = 0.7;
-ar = 0;
+ar = 0.4;
 fr0r = 25;
 fr0 = fr0r*(1-lr*ar);
-frsig2 = 0.1;
+frsig2 = 4;
 sigr = frsig2*(1-lr^2*ar^2);
 
 %donation
@@ -56,8 +56,8 @@ for god = 1:godsim
   ff = zeros(1,length(t));
   fr = zeros(1,length(t));
   fb = zeros(1,length(t));
-  regsin = 1 % 0=autoregression 1=sinusoidal (for ff,fr,fb)
-  if regsin == 1   
+  regsin = 0; % 0=autoregression 1=sinusoidal (for ff,fr,fb)
+  if regsin == 0   
     for  i = 1:length(t)
       if i == 1
         f(i) = (f0 + normrnd(0,1));
@@ -79,22 +79,14 @@ for god = 1:godsim
     end
   else
     period = 10;
-    f = f0r + cos(2*pi*(1:length(t))/period-pi/2);
-    ff = ff0r + cos(2*pi*(1:length(t))/period);
-    fr = fr0r + cos(2*pi*(1:length(t))/period-pi/2);
-    fb = fb0r + cos(2*pi*(1:length(t))/period-pi/2);
+    lag = 0;
+    A = 1; % amplitude
+    f = f0r + A*cos(2*pi*(1:length(t))/period-pi);
+    ff = ff0r + A*cos(2*pi*(1:length(t))/period);
+    fr = fr0r + A*cos(2*pi*(1:length(t))/period-pi);
+    fb = fb0r + A*cos(2*pi*(1:length(t))/period-pi);
   end
 
-  %plot(t(pw(1):pw(2)),f(pw(1):pw(2)));
-  %xlabel('time');
-  %ylabel('net return');
-
-  %hold on
-  %plot(t(pw(1):pw(2)),ff(pw(1):pw(2)));
-  %plot(t(pw(1):pw(2)),fr(pw(1):pw(2)));
-  %plot(t(pw(1):pw(2)),fb(pw(1):pw(2)));
-  %legend('f','ff','fr','fb');
-  %hold off
 
 
   %fprintf('\n');
@@ -134,7 +126,7 @@ for god = 1:godsim
   Hf = norminv(2/3,f0r,fsig2^(1/2)); % threshold for high f
   cvalth = 80; % buying threshold for buystrat code 1
 
-  simtime = 100; % number of buying opportunities
+  simtime = 9500; % number of buying opportunities
   fund = 0; % money saved
   cumb = 0; % cummulative conservation value
 
@@ -145,8 +137,10 @@ for god = 1:godsim
 
   efmu = 0; % mean of ef
   efsig2 = 0; % var of ef
+  ermu = 0; % mean of er
+  ersig2 = 0; % var of er
 
-  ch = 2; % land change cost and option value
+  ch = 0; % land change cost and option value
 
   edisc = repelem(1+rho,length(f)).^(0:(length(f)-1)); %economic discount rate.
   ecodisc = repelem(1+del,length(f)).^(0:(length(f)-1)); %ecological discount rate
@@ -307,6 +301,7 @@ for god = 1:godsim
       else 
         nexttile
         histogram(tjs);
+        xlabel('tj');
       end
     end
 
@@ -329,3 +324,6 @@ end
 % fprintf('mean of cor(f,B)=%.2f\n',mfBcor/godsim);
 % fprintf('mean of cor(f,tj)=%.2f\n',mftjcor/godsim);
 fprintf("mean tj=%.2f\n",sum(tjs)/simtime);
+fprintf("pr(tj=1) = %.2f\n", length(tjs(tjs==1))/length(tjs));
+fprintf("pr(tj=2) = %.2f\n", length(tjs(tjs==2))/length(tjs));
+fprintf("pr(tj=3) = %.2f\n", length(tjs(tjs==3))/length(tjs));
