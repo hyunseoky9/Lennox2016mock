@@ -1,4 +1,4 @@
-function [receptacle] = mainsim(param,receptacle)
+function [receptacle] = mainsim(param)
 mftjcor = 0;
 mfCcor = 0;
 mfBcor = 0;
@@ -6,8 +6,8 @@ mfBcor = 0;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Constant Parameters 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-pind = 2;
-%rng(1);
+pind = 2; % parameter index
+rng(1);
 timeline = param(pind-1);
 t = linspace(1,timeline,timeline);
 
@@ -52,7 +52,7 @@ pind = 0;
 godsim = length(code)*param(pind+29);
 pind = 3;
 
-strcumb = receptacle{1}; % strategy's cumulative benefit
+strcumb = zeros(1,length(code)); % strategy's cumulative benefit
 for god = 1:godsim
   f = zeros(0,length(t));
   ff = zeros(1,length(t));
@@ -60,24 +60,18 @@ for god = 1:godsim
   fb = zeros(1,length(t));
   regsin = 0; % 0=autoregression 1=sinusoidal (for ff,fr,fb)
   if regsin == 0   
-    for  i = 1:length(t)
-      if i == 1
-        f(i) = (f0 + normrnd(0,1));
-      else
-        f(i) = a*f(i-1) + (f0 + sig*normrnd(0,1));
-      end
+    f(1) = (f0 + normrnd(0,1));
+    for  i = 2:length(t)
+      f(i) = a*f(i-1) + (f0 + sig*normrnd(0,1));
     end
 
-    for i = 1:length(t)
-      if i == 1
-        ff(i) = (ff0 + sigf*normrnd(0,1));
-        fb(i) = (fb0 + sigb*normrnd(0,1));
-        f(i) = (fr0 + sigr*normrnd(0,1));
-      else
-        ff(i) = lf*(af*ff(i-1) + (1-af)*(f(i) - f0r)) + (ff0 + sigf*normrnd(0,1));
-        fb(i) = lb*(ab*fb(i-1) + (1-ab)*(f(i) - f0r)) + (fb0 + sigb*normrnd(0,1));
-        fr(i) = lr*(ar*fr(i-1) + (1-ar)*(f(i) - f0r)) + (fr0 + sigr*normrnd(0,1));
-      end
+    ff(1) = (ff0 + sigf*normrnd(0,1));
+    fb(1) = (fb0 + sigb*normrnd(0,1));
+    f(1) = (fr0 + sigr*normrnd(0,1));
+    for i = 2:length(t)
+      ff(i) = lf*(af*ff(i-1) + (1-af)*(f(i) - f0r)) + (ff0 + sigf*normrnd(0,1));
+      fb(i) = lb*(ab*fb(i-1) + (1-ab)*(f(i) - f0r)) + (fb0 + sigb*normrnd(0,1));
+      fr(i) = lr*(ar*fr(i-1) + (1-ar)*(f(i) - f0r)) + (fr0 + sigr*normrnd(0,1));
     end
   else
     period = param(pind+27);
@@ -232,8 +226,8 @@ for god = 1:godsim
   %% evaluating and buying process
   for i = 1:simtime
     fund = fund + fb(i); % add this yr's fund to the account
-    [cumb,fund,buy] = buystrat(buy,code(8),cumb,fund,fb(i),ben(i),C(i),E(i),ff(i),fr(i),al,be,cvalth,Lc,Hc,Lff,Hff,Lfr,Hfr,Lf,Hf,LE,HE);
-    %[cumb,fund,buy] = buystrat(buy,code(mod(god,length(code))+1),cumb,fund,fb(i),ben(i),C(i),E(i),ff(i),fr(i),al,be,cvalth,Lc,Hc,Lff,Hff,Lfr,Hfr,Lf,Hf,LE,HE);
+    %[cumb,fund,buy] = buystrat(buy,code(8),cumb,fund,fb(i),ben(i),C(i),E(i),ff(i),fr(i),al,be,cvalth,Lc,Hc,Lff,Hff,Lfr,Hfr,Lf,Hf,LE,HE);
+    [cumb,fund,buy] = buystrat(buy,code(mod(god,length(code))+1),cumb,fund,fb(i),ben(i),C(i),E(i),ff(i),fr(i),al,be,cvalth,Lc,Hc,Lff,Hff,Lfr,Hfr,Lf,Hf,LE,HE);
   end
   strcumb(mod(god,length(code))+1) = strcumb(mod(god,length(code))+1) + cumb;
   %fprintf("cumb=%.2f\n",cumb);
@@ -258,47 +252,55 @@ for god = 1:godsim
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   % PLOTTING
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  plotting = 0;
+  plotting = 1;
   if plotting == 1
-    what2pl = [0,5];
+    what2pl = [5,6];
     tiledlayout(length(what2pl),1)
     for pl = 1:length(what2pl)
       if what2pl(pl) == 0 % ff, fr
         nexttile
-        plot(t(1:simtime),ff(1:simtime));
+        plot(t(1:simtime),ff(1:simtime),'g');
         xlabel('time');
         ylabel('net return');
         hold on
-        plot(t(1:simtime),fr(1:simtime));
+        plot(t(1:simtime),fr(1:simtime),'r');
         legend('ff','fr');
         hold off
       elseif what2pl(pl) == 1 %f, ff, fr, fb
         nexttile
-        plot(t(1:simtime),f(1:simtime));
+        plot(t(1:simtime),f(1:simtime),'k');
         xlabel('time');
         ylabel('net return');
         hold on
-        plot(t(1:simtime),ff(1:simtime));
-        plot(t(1:simtime),fr(1:simtime));
-        plot(t(1:simtime),fb(1:simtime));
+        plot(t(1:simtime),ff(1:simtime),'g');
+        plot(t(1:simtime),fr(1:simtime),'r');
+        plot(t(1:simtime),fb(1:simtime),'b');
         legend('f','ff','fr','fb');
         hold off
       elseif what2pl(pl) == 2 % fr-ff & f
         nexttile
         plot(t(1:simtime),(fr(1:simtime)-ff(1:simtime)));
-        plot(t(1:simtime),f(1:simtime));
+        plot(t(1:simtime),f(1:simtime),'k');
         xlabel('time');
         ylabel('net return');
 
       elseif what2pl(pl) == 3 % f
         nexttile 
-        plot(1:simtime,f(1:simtime));
-        legend('f')
+        plot(1:simtime,f(1:simtime),'k');
+        legend('f');
       elseif what2pl(pl) == 4 % c
         %land cost
         nexttile
         plot(t(1:simtime),C);%.2f\n',cor(1,2));
-        legend('land cost')
+        legend('land cost');
+      elseif what2pl(pl) == 5 % ff
+        nexttile
+        plot(t(1:simtime),ff(1:simtime),'g');
+        legend('ff');
+      elseif what2pl(pl) == 6 % fr
+        nexttile
+        plot(t(1:simtime),fr(1:simtime),'r');
+        legend('fr');
       else 
         nexttile
         histogram(tjs);
@@ -316,7 +318,7 @@ for god = 1:godsim
 end
 
 strcumb = strcumb/(godsim/length(code));
-receptacle = {strcumb};
+receptacle = {strcumb,ff};
 %fprintf("str     mean cumb\n");
 %stratstr = {'CVAL','Lc','Hc','Lff','Hff','Lfr','Hfr','LE','HE'};
 %for i = 1:length(strcumb)

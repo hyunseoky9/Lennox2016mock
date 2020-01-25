@@ -1,7 +1,7 @@
 clear all
 
 %rng(1);
-timeline = 800;
+timeline = 1600;
 %general economy
 a = 0.8;
 f0r = 30;
@@ -10,8 +10,8 @@ fsig2 = 10;
 sig = fsig2*(1-a^2);
 
 %forestry
-lf = 0.7; %lambda
-af = 0.4;
+lf = 1; %lambda
+af = 0.28;
 ff0r = 25;
 ff0 = ff0r*(1-lf*af);
 ffsig2 = 4;
@@ -19,23 +19,23 @@ sigf = ffsig2*(1-lf^2*af^2);
 factorf = lf*(1-af)*f0r/(1-af*lf);
 
 %housing
-lr = 0.7;
-ar = 0.4;
+lr = 1;
+ar = 0.28;
 fr0r = 25;
 fr0 = fr0r*(1-lr*ar);
 frsig2 = 4;
 sigr = frsig2*(1-lr^2*ar^2);
 
 %donation
-lb = 0.7;
-ab = 0.9;
+lb = 1;
+ab = 0.63;
 fb0r = 25;
 fb0 = fb0r*(1-lb*ab);
 fbsig2 = 4;
 sigb = fbsig2*(1-lb^2*ab^2);
 
 % buy strategy stuff
-codenum = 9;
+codenum = 1;
 al = 1;
 be = 1;
 
@@ -49,7 +49,7 @@ burnin = 201; % burn in first few values of net return as they have not converge
 
 cvalth = 80; % buying threshold for buystrat code 1
 
-simtime = 100; % number of buying opportunities
+simtime = 1000; % number of buying opportunities
 fund = 0; % money saved
 cumb = 0; % cummulative conservation value
 
@@ -67,16 +67,13 @@ ch = 0; % land change cost and option value
 
 b_def = 10; % default b
 
-strcumb = zeros(1,length((1:codenum))); % strategy's cumulative benefit 
-
 param = [timeline,a,f0r,f0,fsig2,sig,lf,af,ff0r,ff0,ffsig2,sigf,factorf,lr,ar,fr0r,fr0,frsig2,sigr,...
 lb,ab,fb0r,fb0,fbsig2,sigb,codenum,al,be,godsimnum,period,lag,A,burnin,cvalth,simtime,fund,...
 cumb,bfn,rho,del,efmu,efsig2,ermu,ersig2,ch,b_def];
 
-receptacle = {strcumb};
-
-receptacle = mainsim(param,receptacle);
+receptacle = mainsim(param);
 strcumb = receptacle{1};
+ff = receptacle{2};
 fprintf("str     mean cumb\n");
 stratstr = {'CVAL','Lc','Hc','Lff','Hff','Lfr','Hfr','LE','HE'};
 for i = 1:length(strcumb)
