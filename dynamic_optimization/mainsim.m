@@ -1,7 +1,4 @@
 function [receptacle] = mainsim(param,receptacle)
-
-
-
 mftjcor = 0;
 mfCcor = 0;
 mfBcor = 0;
@@ -9,52 +6,54 @@ mfBcor = 0;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Constant Parameters 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+pind = 2;
 %rng(1);
-timeline = 800;
+timeline = param(pind-1);
 t = linspace(1,timeline,timeline);
 
 %general economy
-a = 0.8;
-f0r = 30;
-f0 = f0r*(1-a);
-fsig2 = 10;
-sig = fsig2*(1-a^2);
+a = param(pind);
+f0r = param(pind+1);
+f0 = param(pind+2);
+fsig2 = param(pind+3);
+sig = param(pind+4);
 
 %forestry
-lf = 0.7; %lambda
-af = 0.4;
-ff0r = 25;
-ff0 = ff0r*(1-lf*af);
-ffsig2 = 4;
-sigf = ffsig2*(1-lf^2*af^2);
-factorf = lf*(1-af)*f0r/(1-af*lf);
+lf = param(pind+5); %lambda
+af = param(pind+6);
+ff0r = param(pind+7);
+ff0 = param(pind+8);
+ffsig2 = param(pind+9);
+sigf = param(pind+10);
+factorf = param(pind+11);
 
 %housing
-lr = 0.7;
-ar = 0.4;
-fr0r = 25;
-fr0 = fr0r*(1-lr*ar);
-frsig2 = 4;
-sigr = frsig2*(1-lr^2*ar^2);
+lr = param(pind+12);
+ar = param(pind+13);
+fr0r = param(pind+14);
+fr0 = param(pind+15);
+frsig2 = param(pind+16);
+sigr = param(pind+17);
 
 %donation
-lb = 0.7;
-ab = 0.9;
-fb0r = 25;
-fb0 = fb0r*(1-lb*ab);
-fbsig2 = 4;
-sigb = fbsig2*(1-lb^2*ab^2);
+lb = param(pind+18);
+ab = param(pind+19);
+fb0r = param(pind+20);
+fb0 = param(pind+21);
+fbsig2 = param(pind+22);
+sigb = param(pind+23);
 
 % buy strategy stuff
-code = 1:9;
-al = 1;
-be = 1;
+code = 1:param(pind+24);
+al = param(pind+25);
+be = param(pind+26);
 
-godsim = length(code)*2;
-strcumb = zeros(1,length(code)); % strategy's cumulative benefit
+pind = 0;
+godsim = length(code)*param(pind+29);
+pind = 3;
+
+strcumb = receptacle{1}; % strategy's cumulative benefit
 for god = 1:godsim
-
   f = zeros(0,length(t));
   ff = zeros(1,length(t));
   fr = zeros(1,length(t));
@@ -81,9 +80,9 @@ for god = 1:godsim
       end
     end
   else
-    period = 10;
-    lag = 0;
-    A = 1; % amplitude
+    period = param(pind+27);
+    lag = param(pind+28);
+    A = param(pind+29); % amplitude
     f = f0r + A*cos(2*pi*(1:length(t))/period-pi);
     ff = ff0r + A*cos(2*pi*(1:length(t))/period);
     fr = fr0r + A*cos(2*pi*(1:length(t))/period-pi);
@@ -111,7 +110,7 @@ for god = 1:godsim
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   % simulation of tj, b, c, buying, etc.
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  burnin = 201; % burn in first few values of net return as they have not converged yet
+  burnin = param(pind+30); % burn in first few values of net return as they have not converged yet
   f = f(burnin:end);
   ff = ff(burnin:end);
   fb = fb(burnin:end);
@@ -127,28 +126,27 @@ for god = 1:godsim
   Hfr = norminv(2/3,Efr,Vfr^(1/2)); % threshold for high fr
   Lf = norminv(1/3,f0r,fsig2^(1/2)); % threshold for low f
   Hf = norminv(2/3,f0r,fsig2^(1/2)); % threshold for high f
-  cvalth = 80; % buying threshold for buystrat code 1
+  cvalth = param(pind+31); % buying threshold for buystrat code 1
 
-  simtime = 100; % number of buying opportunities
-  fund = 0; % money saved
-  cumb = 0; % cummulative conservation value
+  simtime = param(pind+32); % number of buying opportunities
+  fund = param(pind+33); % money saved
+  cumb = param(pind+34); % cummulative conservation value
 
-  bfn = 1; % benefit fn scheme. 1=constant, 2=normal var correlated to e_fj, 3=non-linear fn of 2
+  bfn = param(pind+35); % benefit fn scheme. 1=constant, 2=normal var correlated to e_fj, 3=non-linear fn of 2
 
-  rho = 0.1; %0.1; % economic discount rate
-  del = 0.01; % ecological discount rate
+  rho = param(pind+36); %0.1; % economic discount rate
+  del = param(pind+37); % ecological discount rate
 
-  efmu = 0; % mean of ef
-  efsig2 = 0; % var of ef
-  ermu = 0; % mean of er
-  ersig2 = 0; % var of er
+  efmu = param(pind+38); % mean of ef
+  efsig2 = param(pind+39); % var of ef
+  ermu = param(pind+40); % mean of er
+  ersig2 = param(pind+41); % var of er
 
-  ch = 0; % land change cost and option value
+  ch = param(pind+42); % land change cost and option value
 
+  b_def = param(pind+43); % default b
   edisc = repelem(1+rho,length(f)).^(0:(length(f)-1)); %economic discount rate.
   ecodisc = repelem(1+del,length(f)).^(0:(length(f)-1)); %ecological discount rate
-  al = 1;
-  be = 1;
 
   C = zeros(1,simtime);
   ben = zeros(1,simtime);
@@ -169,13 +167,13 @@ for god = 1:godsim
     % getting e_fj,e_rj, and b (if bfn=2)
    
 
-    e_rj = normrnd(0,0); % indiv dev var
+    e_rj = normrnd(ermu,ersig2); % indiv dev var
 
     if bfn == 1
       e_fj = normrnd(efmu,efsig2);
-      b = 10;
+      b = b_def;
     elseif bfn >= 2
-      b_mu = 10;
+      b_mu = b_def;
       mu = [efmu b_mu];
       sigma = [efsig2 0.8; 0.8 1];
       R = mvnrnd(mu,sigma,1);
@@ -260,7 +258,7 @@ for god = 1:godsim
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   % PLOTTING
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  plotting = 1;
+  plotting = 0;
   if plotting == 1
     what2pl = [0,5];
     tiledlayout(length(what2pl),1)
@@ -318,12 +316,12 @@ for god = 1:godsim
 end
 
 strcumb = strcumb/(godsim/length(code));
-fprintf("str     mean cumb\n");
-stratstr = {'CVAL','Lc','Hc','Lff','Hff','Lfr','Hfr','LE','HE'};
-for i = 1:length(strcumb)
-  fprintf("%s       %.2f\n",stratstr{i},strcumb(i));
-end
-
+receptacle = {strcumb};
+%fprintf("str     mean cumb\n");
+%stratstr = {'CVAL','Lc','Hc','Lff','Hff','Lfr','Hfr','LE','HE'};
+%for i = 1:length(strcumb)
+%  fprintf("%s       %.2f\n",stratstr{i},strcumb(i));
+%end
 
 
 % fprintf('mean of cor(f,C)=%.2f\n',mfCcor/godsim);
