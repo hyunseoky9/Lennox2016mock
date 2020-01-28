@@ -9,10 +9,10 @@ f0 = f0r*(1-a);
 fsig2 = 10;
 sig = fsig2*(1-a^2);
 
-codenum = 9;
+code = [];
 
 ab = linspace(1,0,11);
-M = zeros(length(ab),1+codenum);
+M = zeros(length(ab),1+length(code));
 M(:,1) = ab;
 for i = 1:length(ab)
 	fprintf("ab=%.2f\n",ab(i));
@@ -75,9 +75,9 @@ for i = 1:length(ab)
 
 
 	param = [timeline,a,f0r,f0,fsig2,sig,lf,af,ff0r,ff0,ffsig2,sigf,factorf,lr,ar,fr0r,fr0,frsig2,sigr,...
-	lb,ab(i),fb0r,fb0,fbsig2,sigb,codenum,al,be,godsimnum,period,lag,A,burnin,cvalth,simtime,fund,...
+	lb,ab(i),fb0r,fb0,fbsig2,sigb,al,be,godsimnum,period,lag,A,burnin,cvalth,simtime,fund,...
 	cumb,bfn,rho,del,efmu,efsig2,ermu,ersig2,ch,b_def];
-	receptacle = mainsim(param);
+	receptacle = mainsim(param,code);
 	strcumb = receptacle{1};
 	M(i,2:end) = strcumb;
 end

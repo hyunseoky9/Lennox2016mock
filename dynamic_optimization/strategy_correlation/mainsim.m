@@ -1,4 +1,4 @@
-function [receptacle] = mainsim(param)
+function [receptacle] = mainsim(param,code)
 mftjcor = 0;
 mfCcor = 0;
 mfBcor = 0;
@@ -44,13 +44,14 @@ fbsig2 = param(pind+22);
 sigb = param(pind+23);
 
 % buy strategy stuff
-code = 1:param(pind+24);
+pind = 1
+code = code;
 al = param(pind+25);
 be = param(pind+26);
 
-pind = 0;
+pind = 0-1;
 godsim = length(code)*param(pind+29);
-pind = 3;
+pind = 3-1;
 
 strcumb = zeros(1,length(code)); % strategy's cumulative benefit
 for god = 1:godsim
@@ -94,11 +95,11 @@ for god = 1:godsim
   %fprintf('\n');
   %fprintf("correlations btw net returns\n");
   cor = corrcoef(ff,f);
-  %fprintf("cor(ff,f)= %.2f\n",cor(1,2))
+  fprintf("cor(ff,f)= %.2f\n",cor(1,2))
   cor = corrcoef(fr,f);
-  %fprintf("cor(fr,f)= %.2f\n",cor(1,2))
+  fprintf("cor(fr,f)= %.2f\n",cor(1,2))
   cor = corrcoef(fb,f);
-  %fprintf("cor(fb,f)= %.2f\n",cor(1,2))
+  fprintf("cor(fb,f)= %.2f\n",cor(1,2))
   %fprintf("\n");
 
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -218,7 +219,7 @@ for god = 1:godsim
   Lc = min(C) + cint/3; % low threshold for cost
   Hc = Lc + cint/3; % high threshold for cost
 
-  E = C./ben; % roi ratio
+  E = ben./C; % roi ratio
   Eint = max(E) - min(E);
   LE = min(E) + Eint/3;
   HE = LE + Eint/3;
@@ -253,8 +254,8 @@ for god = 1:godsim
   % PLOTTING
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   plotting = 1;
-  if plotting == 0
-    what2pl = [5,6];
+  if plotting == 1
+    what2pl = [0]; % [5,6,7];
     tiledlayout(length(what2pl),1)
     for pl = 1:length(what2pl)
       if what2pl(pl) == 0 % ff, fr
@@ -280,7 +281,7 @@ for god = 1:godsim
       elseif what2pl(pl) == 2 % fr-ff & f
         nexttile
         plot(t(1:simtime),(fr(1:simtime)-ff(1:simtime)));
-        plot(t(1:simtime),f(1:simtime),'k');
+        %plot(t(1:simtime),f(1:simtime),'k');
         xlabel('time');
         ylabel('net return');
 
@@ -301,7 +302,11 @@ for god = 1:godsim
         nexttile
         plot(t(1:simtime),fr(1:simtime),'r');
         legend('fr');
-      else 
+      elseif what2pl(pl) == 7 % fb
+        nexttile
+        plot(t(1:simtime),fb(1:simtime),'r');
+        legend('fb');
+      else
         nexttile
         histogram(tjs);
         xlabel('tj');

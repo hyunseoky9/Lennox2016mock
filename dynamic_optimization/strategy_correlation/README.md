@@ -1,7 +1,7 @@
 looking at correlation between strategy rewards and autocorrelation coefficients, and cross correlation btw strategies' rewards with a set coefficients.
 
 5scenarios:
-From default and simtime=50,
+From default parameter values and simtime=50,
 1. When cor(f,fr) ~ 1, ff cahgnes from low cor(f,ff) to high cor(f,ff)
 param: lr=0.7, ar=0; lf=0.8, af=1~0
 2. Opposite of 1. (ff is now fr)

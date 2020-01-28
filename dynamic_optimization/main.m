@@ -36,7 +36,7 @@ fbsig2 = 2;
 sigb = fbsig2*(1-lb^2*ab^2);
 
 % buy strategy stuff
-codenum = 9;
+code = 1:9;
 al = 1;
 be = 1;
 
@@ -69,10 +69,10 @@ ch = 0; % land change cost and option value
 b_def = 10; % default b
 
 param = [timeline,a,f0r,f0,fsig2,sig,lf,af,ff0r,ff0,ffsig2,sigf,factorf,lr,ar,fr0r,fr0,frsig2,sigr,...
-lb,ab,fb0r,fb0,fbsig2,sigb,codenum,al,be,godsimnum,period,lag,A,burnin,cvalth,simtime,fund,...
+lb,ab,fb0r,fb0,fbsig2,sigb,al,be,godsimnum,period,lag,A,burnin,cvalth,simtime,fund,...
 cumb,bfn,rho,del,efmu,efsig2,ermu,ersig2,ch,b_def];
 
-receptacle = mainsim(param);
+receptacle = mainsim(param,code);
 strcumb = receptacle{1};
 fprintf("str     mean cumb\n");
 stratstr = {'CVAL','Lc','Hc','Lff','Hff','Lfr','Hfr','LE','HE'};

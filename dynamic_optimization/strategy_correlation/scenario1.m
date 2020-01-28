@@ -9,13 +9,13 @@ f0 = f0r*(1-a);
 fsig2 = 10;
 sig = fsig2*(1-a^2);
 
-codenum = 9;
+code = [];
 
 
 %forestry
 lf = 0.8; %lambda
 af = linspace(1,0,11); %linspace(1,0,101);
-M = zeros(length(af),1+codenum);
+M = zeros(length(af),1+length(code));
 M(:,1) = af;
 for i = 1:length(af)
 	fprintf("af=%.2f\n",af(i));
@@ -76,9 +76,9 @@ for i = 1:length(af)
 
 
 	param = [timeline,a,f0r,f0,fsig2,sig,lf,af(i),ff0r,ff0,ffsig2,sigf,factorf,lr,ar,fr0r,fr0,frsig2,sigr,...
-	lb,ab,fb0r,fb0,fbsig2,sigb,codenum,al,be,godsimnum,period,lag,A,burnin,cvalth,simtime,fund,...
+	lb,ab,fb0r,fb0,fbsig2,sigb,al,be,godsimnum,period,lag,A,burnin,cvalth,simtime,fund,...
 	cumb,bfn,rho,del,efmu,efsig2,ermu,ersig2,ch,b_def];
-	receptacle = mainsim(param);
+	receptacle = mainsim(param,code);
 	strcumb = receptacle{1};
 	M(i,2:end) = strcumb;
 end
