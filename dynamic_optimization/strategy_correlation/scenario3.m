@@ -9,7 +9,7 @@ f0 = f0r*(1-a);
 fsig2 = 10;
 sig = fsig2*(1-a^2);
 
-codenum = 9;
+codenum = 1:9;
 
 fb0r = linspace(25,325,11);
 M = zeros(length(fb0r),1+length(code));

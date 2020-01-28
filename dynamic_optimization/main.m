@@ -2,7 +2,7 @@ clear all
 
 %rng(1);
 
-timeline = 800;
+timeline = 10000;
 %general economy
 a = 0.8;
 f0r = 30;
@@ -12,7 +12,7 @@ sig = fsig2*(1-a^2);
 
 %forestry
 lf = 0.7; %lambda
-af = 0.4;
+af = 0;
 ff0r = 25;
 ff0 = ff0r*(1-lf*af);
 ffsig2 = 2;
@@ -20,8 +20,8 @@ sigf = ffsig2*(1-lf^2*af^2);
 factorf = lf*(1-af)*f0r/(1-af*lf);
 
 %housing
-lr = 0.7;
-ar = 0.4;
+lr = 0.8;
+ar = 1;
 fr0r = 25;
 fr0 = fr0r*(1-lr*ar);
 frsig2 = 2;
@@ -36,7 +36,7 @@ fbsig2 = 2;
 sigb = fbsig2*(1-lb^2*ab^2);
 
 % buy strategy stuff
-code = 1:9;
+code = [2];
 al = 1;
 be = 1;
 
@@ -50,7 +50,7 @@ burnin = 201; % burn in first few values of net return as they have not converge
 
 cvalth = 80; % buying threshold for buystrat code 1
 
-simtime = 100; % number of buying opportunities
+simtime = 9500; % number of buying opportunities
 fund = 0; % money saved
 cumb = 0; % cummulative conservation value
 

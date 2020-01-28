@@ -295,13 +295,13 @@ for god = 1:godsim
       elseif what2pl(pl) == 3 % f
         nexttile 
         plot(1:simtime,f(1:simtime));
-        legend('f')
+        legend('f');
       elseif what2pl(pl) == 4 % c
         %land cost
         nexttile
         plot(t(1:simtime),C);%.2f\n',cor(1,2));
-        legend('land cost')
-      else 
+        legend('land cost');
+      else
         nexttile
         histogram(tjs);
         xlabel('tj');

@@ -318,10 +318,14 @@ for god = 1:godsim
         plot(t(1:simtime),tjs)
         legend('tj')
         xlabel('time')
-      else
+      elseif what2pl(pl) == 10
         nexttile
         histogram(tjs);
         xlabel('tj');
+      else
+        nexttile
+        histogram(C);
+        xlabel('C');
       end
 
 

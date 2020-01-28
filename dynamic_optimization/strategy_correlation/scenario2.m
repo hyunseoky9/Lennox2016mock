@@ -9,10 +9,10 @@ f0 = f0r*(1-a);
 fsig2 = 10;
 sig = fsig2*(1-a^2);
 
-code = [];
+code = 1:3;
 
 
-ar = linspace(1,0,11); %linspace(1,0,101);
+ar = [1]; %linspace(1,0,11); %linspace(1,0,101);
 M = zeros(length(ar),1+length(code));
 M(:,1) = ar;
 for i = 1:length(ar)

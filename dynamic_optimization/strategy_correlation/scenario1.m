@@ -9,8 +9,7 @@ f0 = f0r*(1-a);
 fsig2 = 10;
 sig = fsig2*(1-a^2);
 
-code = [];
-
+code = 1:9;
 
 %forestry
 lf = 0.8; %lambda
