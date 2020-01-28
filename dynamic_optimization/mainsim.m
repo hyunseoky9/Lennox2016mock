@@ -1,4 +1,4 @@
-function [receptacle] = mainsim(param)
+function [receptacle] = mainsim(param,code)
 mftjcor = 0;
 mfCcor = 0;
 mfBcor = 0;
@@ -44,13 +44,14 @@ fbsig2 = param(pind+22);
 sigb = param(pind+23);
 
 % buy strategy stuff
-code = 1:param(pind+24);
+pind = 1;
+code = code;
 al = param(pind+25);
 be = param(pind+26);
 
-pind = 0;
+pind = 0-1;
 godsim = length(code)*param(pind+29);
-pind = 3;
+pind = 3-1;
 
 strcumb = zeros(1,length(code)); % strategy's cumulative benefit
 for god = 1:godsim
@@ -93,11 +94,11 @@ for god = 1:godsim
   %fprintf('simulation f mean = %f\n',mean(f(200:800))) %simulation mean
   %fprintf('\n');
   %fprintf("correlations btw net returns\n");
-  cor = corrcoef(ff,f);
+  %cor = corrcoef(ff,f);
   %fprintf("cor(ff,f)= %.2f\n",cor(1,2))
-  cor = corrcoef(fr,f);
+  %cor = corrcoef(fr,f);
   %fprintf("cor(fr,f)= %.2f\n",cor(1,2))
-  cor = corrcoef(fb,f);
+  %cor = corrcoef(fb,f);
   %fprintf("cor(fb,f)= %.2f\n",cor(1,2))
   %fprintf("\n");
 
@@ -124,6 +125,7 @@ for god = 1:godsim
 
   simtime = param(pind+32); % number of buying opportunities
   fund = param(pind+33); % money saved
+  fundt = zeros(1,simtime); % array for fund over time
   cumb = param(pind+34); % cummulative conservation value
 
   bfn = param(pind+35); % benefit fn scheme. 1=constant, 2=normal var correlated to e_fj, 3=non-linear fn of 2
@@ -218,7 +220,7 @@ for god = 1:godsim
   Lc = min(C) + cint/3; % low threshold for cost
   Hc = Lc + cint/3; % high threshold for cost
 
-  E = C./ben; % roi ratio
+  E = ben./C; % roi ratio
   Eint = max(E) - min(E);
   LE = min(E) + Eint/3;
   HE = LE + Eint/3;
@@ -228,6 +230,7 @@ for god = 1:godsim
     fund = fund + fb(i); % add this yr's fund to the account
     %[cumb,fund,buy] = buystrat(buy,code(8),cumb,fund,fb(i),ben(i),C(i),E(i),ff(i),fr(i),al,be,cvalth,Lc,Hc,Lff,Hff,Lfr,Hfr,Lf,Hf,LE,HE);
     [cumb,fund,buy] = buystrat(buy,code(mod(god,length(code))+1),cumb,fund,fb(i),ben(i),C(i),E(i),ff(i),fr(i),al,be,cvalth,Lc,Hc,Lff,Hff,Lfr,Hfr,Lf,Hf,LE,HE);
+    fundt(i) = fund;
   end
   strcumb(mod(god,length(code))+1) = strcumb(mod(god,length(code))+1) + cumb;
   %fprintf("cumb=%.2f\n",cumb);
@@ -254,7 +257,7 @@ for god = 1:godsim
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   plotting = 1;
   if plotting == 1
-    what2pl = [5,6];
+    what2pl = [0,8,9]; % [5,6,7];
     tiledlayout(length(what2pl),1)
     for pl = 1:length(what2pl)
       if what2pl(pl) == 0 % ff, fr
@@ -280,7 +283,7 @@ for god = 1:godsim
       elseif what2pl(pl) == 2 % fr-ff & f
         nexttile
         plot(t(1:simtime),(fr(1:simtime)-ff(1:simtime)));
-        plot(t(1:simtime),f(1:simtime),'k');
+        %plot(t(1:simtime),f(1:simtime),'k');
         xlabel('time');
         ylabel('net return');
 
@@ -301,18 +304,33 @@ for god = 1:godsim
         nexttile
         plot(t(1:simtime),fr(1:simtime),'r');
         legend('fr');
-      else 
+      elseif what2pl(pl) == 7 % fb
+        nexttile
+        plot(t(1:simtime),fb(1:simtime),'r');
+        legend('fb');
+      elseif what2pl(pl) == 8 % fund
+        nexttile 
+        plot(t(1:simtime),fundt);
+        legend('fund');
+        xlabel('time');
+      elseif what2pl(pl) == 9 % tj over time
+        nexttile
+        plot(t(1:simtime),tjs)
+        legend('tj')
+        xlabel('time')
+      else
         nexttile
         histogram(tjs);
         xlabel('tj');
       end
+
+
     end
 
     % buying points
     %nexttile
     %scatter(t(1:simtime),buy);
     %legend('buying points')
-
   end
   %fprintf("god=%d\n",god);
 end
