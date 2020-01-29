@@ -40,7 +40,7 @@ code = [2];
 al = 1;
 be = 1;
 
-godsimnum = 1;
+godsimnum = 1000;
 
 period = 10;
 lag = 0;
