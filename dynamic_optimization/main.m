@@ -40,7 +40,7 @@ code = [2];
 al = 1;
 be = 1;
 
-godsimnum = 1000;
+godsimnum = 1;
 
 period = 10;
 lag = 0;
@@ -50,7 +50,7 @@ burnin = 201; % burn in first few values of net return as they have not converge
 
 cvalth = 80; % buying threshold for buystrat code 1
 
-simtime = 100; % number of buying opportunities
+simtime = 50; % number of buying opportunities
 fund = 0; % money saved
 cumb = 0; % cummulative conservation value
 
