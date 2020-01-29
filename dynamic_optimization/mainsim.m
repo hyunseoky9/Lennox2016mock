@@ -53,7 +53,7 @@ pind = 0-1;
 godsim = length(code)*param(pind+29);
 pind = 3-1;
 
-tjsrecep = zeros(1,param(pind+32));
+%tjsrecep = zeros(1,param(pind+32));
 strcumb = zeros(1,length(code)); % strategy's cumulative benefit
 for god = 1:godsim
   f = zeros(0,length(t));
@@ -144,21 +144,6 @@ for god = 1:godsim
   edisc = repelem(1+rho,length(f)).^(0:(length(f)-1)); %economic discount rate.
   ecodisc = repelem(1+del,length(f)).^(0:(length(f)-1)); %ecological discount rate
 
-  % calculating t_j prehand
-  tjoptim = sum((f_rj(t_j:end)-f_fj(t_j:end))./edisc - ch;
-  optimarray = zeros(1,simtime);
-  optimarray(1) = tjoptim
-  for i = 2:simtime
-    optimarray(i) = optimarray(i-1) - (f_rj(t_j)-f_fj(t_j))/nedisc(t_j);
-  end
-  while tjoptim <= 0 && t_j <= length(f_fj)
-    tjoptim = tjoptim - (f_rj(t_j)-f_fj(t_j))/nedisc(t_j);
-    t_j = t_j + 1;
-  end
-
-
-
-
   C = zeros(1,simtime);
   ben = zeros(1,simtime);
   tjs = zeros(1,simtime);
@@ -201,11 +186,20 @@ for god = 1:godsim
 
 
     % getting clearing time t_j
-    t_jmethod = 0 % 0=earliest time its profitable, 1=time when its most profitable
+    t_jmethod = 0; % 0=earliest time its profitable, 1=time when its most profitable
     t_j = 1;
     if t_jmethod
-    
+      nedisc = edisc(1:end-i+1); % new economic discount rate for this sim.
+      tjoptim = sum((f_rj(t_j:end)-f_fj(t_j:end))./nedisc(1:(end-t_j+1))) - ch;
+      optimarray = zeros(1,simtime);
+      optimarray(1) = tjoptim
+      for i = 2:simtime
+        optimarray(i) = optimarray(i-1) - (f_rj(t_j)-f_fj(t_j))/nedisc(t_j);
+      end
+      [val, t_j] = max(optimarray);
     else
+      nedisc = edisc(1:end-i+1); % new economic discount rate for this sim.
+      tjoptim = sum((f_rj(t_j:end)-f_fj(t_j:end))./nedisc(1:(end-t_j+1))) - ch;
       while tjoptim <= 0 && t_j <= length(f_fj)
         tjoptim = tjoptim - (f_rj(t_j)-f_fj(t_j))/nedisc(t_j);
         t_j = t_j + 1;
@@ -233,9 +227,9 @@ for god = 1:godsim
     %v = b ./ecodisc(t_j:end);
     %disp(v(1:15));
   end
-  tjstemp = tjs;
-  tjstemp(tjstemp>1) = 0;
-  tjsrecep = tjsrecep + tjstemp;
+  %tjstemp = tjs;
+  %tjstemp(tjstemp>1) = 0;
+  %tjsrecep = tjsrecep + tjstemp;
   cint = max(C)-min(C);
   Lc = min(C) + cint/3; % low threshold for cost
   Hc = Lc + cint/3; % high threshold for cost
@@ -363,9 +357,9 @@ for god = 1:godsim
   fprintf("god=%d\n",god);
 end
 
-tjsrecep = tjsrecep/(godsim/length(code));
-histogram(tjsrecep);
-xlabel('tjsrecep');
+%tjsrecep = tjsrecep/(godsim/length(code));
+%histogram(tjsrecep);
+%xlabel('tjsrecep');
 strcumb = strcumb/(godsim/length(code));
 receptacle = {strcumb};
 %fprintf("str     mean cumb\n");
