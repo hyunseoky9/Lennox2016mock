@@ -53,6 +53,7 @@ pind = 0-1;
 godsim = length(code)*param(pind+29);
 pind = 3-1;
 
+tjsrecep = zeros(1,param(pind+32));
 strcumb = zeros(1,length(code)); % strategy's cumulative benefit
 for god = 1:godsim
   f = zeros(0,length(t));
@@ -129,7 +130,6 @@ for god = 1:godsim
   cumb = param(pind+34); % cummulative conservation value
 
   bfn = param(pind+35); % benefit fn scheme. 1=constant, 2=normal var correlated to e_fj, 3=non-linear fn of 2
-
   rho = param(pind+36); %0.1; % economic discount rate
   del = param(pind+37); % ecological discount rate
 
@@ -186,14 +186,18 @@ for god = 1:godsim
 
 
     % getting clearing time t_j
+    t_jmethod = 0 % 0=earliest time its profitable, 1=time when its most profitable
     t_j = 1;
-    nedisc = edisc(1:end-i+1); % new economic discount rate for this sim.
-    tjoptim = sum((f_rj(t_j:end)-f_fj(t_j:end))./nedisc(1:(end-t_j+1))) - ch;
-    while tjoptim <= 0 && t_j <= length(f_fj)
-      tjoptim = tjoptim - (f_rj(t_j)-f_fj(t_j))/nedisc(t_j);
-      t_j = t_j + 1;
+    if t_jmethod
+      
+    else
+      nedisc = edisc(1:end-i+1); % new economic discount rate for this sim.
+      tjoptim = sum((f_rj(t_j:end)-f_fj(t_j:end))./nedisc(1:(end-t_j+1))) - ch;
+      while tjoptim <= 0 && t_j <= length(f_fj)
+        tjoptim = tjoptim - (f_rj(t_j)-f_fj(t_j))/nedisc(t_j);
+        t_j = t_j + 1;
+      end
     end
-
     tjs(i) = t_j;
     if t_j > 1
         %fprintf('tj was bigger than 1 on step %d; t_j=%d\n',i,t_j);
@@ -216,10 +220,13 @@ for god = 1:godsim
     %v = b ./ecodisc(t_j:end);
     %disp(v(1:15));
   end
+  tjstemp = tjs;
+  tjstemp(tjstemp>1) = 0;
+  tjsrecep = tjsrecep + tjstemp;
   cint = max(C)-min(C);
   Lc = min(C) + cint/3; % low threshold for cost
   Hc = Lc + cint/3; % high threshold for cost
-
+  %fprintf("Lc=%.2f, Hc=%.2f\n",Lc,Hc);
   E = ben./C; % roi ratio
   Eint = max(E) - min(E);
   LE = min(E) + Eint/3;
@@ -257,7 +264,7 @@ for god = 1:godsim
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   plotting = 1;
   if plotting == 1
-    what2pl = [0,8,9]; % [5,6,7];
+    what2pl = [0,9]; % [5,6,7];
     tiledlayout(length(what2pl),1)
     for pl = 1:length(what2pl)
       if what2pl(pl) == 0 % ff, fr
@@ -322,10 +329,14 @@ for god = 1:godsim
         nexttile
         histogram(tjs);
         xlabel('tj');
-      else
+      elseif what2pl(pl) == 11
         nexttile
         histogram(C);
         xlabel('C');
+      else 
+        nexttile
+        histogram(ben);
+        xlabel('ben');
       end
 
 
@@ -336,9 +347,12 @@ for god = 1:godsim
     %scatter(t(1:simtime),buy);
     %legend('buying points')
   end
-  %fprintf("god=%d\n",god);
+  fprintf("god=%d\n",god);
 end
 
+tjsrecep = tjsrecep/(godsim/length(code));
+histogram(tjsrecep);
+xlabel('tjsrecep');
 strcumb = strcumb/(godsim/length(code));
 receptacle = {strcumb};
 %fprintf("str     mean cumb\n");

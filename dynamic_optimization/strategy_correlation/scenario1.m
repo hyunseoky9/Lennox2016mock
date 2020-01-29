@@ -9,11 +9,11 @@ f0 = f0r*(1-a);
 fsig2 = 10;
 sig = fsig2*(1-a^2);
 
-code = 1:9;
+code = [2,3];
 
 %forestry
 lf = 0.8; %lambda
-af = linspace(1,0,11); %linspace(1,0,101);
+af = [1,0]; %linspace(1,0,11); %linspace(1,0,101);
 M = zeros(length(af),1+length(code));
 M(:,1) = af;
 for i = 1:length(af)
@@ -44,7 +44,7 @@ for i = 1:length(af)
 	al = 1;
 	be = 1;
 
-	godsimnum = 100;
+	godsimnum = 1000;
 
 	period = 10;
 	lag = 0;
