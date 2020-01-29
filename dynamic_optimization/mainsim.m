@@ -144,21 +144,6 @@ for god = 1:godsim
   edisc = repelem(1+rho,length(f)).^(0:(length(f)-1)); %economic discount rate.
   ecodisc = repelem(1+del,length(f)).^(0:(length(f)-1)); %ecological discount rate
 
-  % calculating t_j prehand
-  tjoptim = sum((f_rj(t_j:end)-f_fj(t_j:end))./edisc - ch;
-  optimarray = zeros(1,simtime);
-  optimarray(1) = tjoptim
-  for i = 2:simtime
-    optimarray(i) = optimarray(i-1) - (f_rj(t_j)-f_fj(t_j))/nedisc(t_j);
-  end
-  while tjoptim <= 0 && t_j <= length(f_fj)
-    tjoptim = tjoptim - (f_rj(t_j)-f_fj(t_j))/nedisc(t_j);
-    t_j = t_j + 1;
-  end
-
-
-
-
   C = zeros(1,simtime);
   ben = zeros(1,simtime);
   tjs = zeros(1,simtime);
@@ -204,8 +189,10 @@ for god = 1:godsim
     t_jmethod = 0 % 0=earliest time its profitable, 1=time when its most profitable
     t_j = 1;
     if t_jmethod
-    
+      
     else
+      nedisc = edisc(1:end-i+1); % new economic discount rate for this sim.
+      tjoptim = sum((f_rj(t_j:end)-f_fj(t_j:end))./nedisc(1:(end-t_j+1))) - ch;
       while tjoptim <= 0 && t_j <= length(f_fj)
         tjoptim = tjoptim - (f_rj(t_j)-f_fj(t_j))/nedisc(t_j);
         t_j = t_j + 1;
