@@ -53,7 +53,7 @@ for i = 1:length(ar)
 
 	burnin = 201; % burn in first few values of net return as they have not converged yet
 
-	cvalth = 80; % buying threshold for buystrat code 1
+	cvalth = 0; % buying threshold for buystrat code 1
 
 	simtime = 50; % number of buying opportunities
 	fund = 0; % money saved

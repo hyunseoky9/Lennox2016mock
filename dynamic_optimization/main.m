@@ -1,8 +1,8 @@
 clear all
 
-%rng(1);
+rng(1);
 
-timeline = 10000;
+timeline = 10000000;
 %general economy
 a = 0.8;
 f0r = 30;
@@ -12,7 +12,7 @@ sig = fsig2*(1-a^2);
 
 %forestry
 lf = 0.7; %lambda
-af = 0;
+af = 1;
 ff0r = 25;
 ff0 = ff0r*(1-lf*af);
 ffsig2 = 2;
@@ -48,9 +48,9 @@ A = 1; % amplitude
 
 burnin = 201; % burn in first few values of net return as they have not converged yet
 
-cvalth = 80; % buying threshold for buystrat code 1
+cvalth = 0; % buying threshold for buystrat code 1
 
-simtime = 9500; % number of buying opportunities
+simtime = 9500000;%9500; % number of buying opportunities
 fund = 0; % money saved
 cumb = 0; % cummulative conservation value
 

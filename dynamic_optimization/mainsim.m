@@ -217,14 +217,30 @@ for god = 1:godsim
     if t_j > 1
         %fprintf('tj was bigger than 1 on step %d; t_j=%d\n',i,t_j);
     end
-    
+    %cind = 1;
+    %t_j = cind; %% test
     % cost
     if t_j == 1
       c = sum(f_rj(t_j:end)./nedisc(t_j:end));
+      %c = sum(f_fj(t_j:end)./nedisc(t_j:end));
     else
+      %c = sum(f_rj(1:end)./nedisc(1:end));
+      %c = sum(f_fj(1:end)./nedisc(1:end));
+      %foo = 2;
+      %c = sum(f_fj(1:(foo-1))./nedisc(1:(foo-1))) + sum(f_rj(foo:end)./nedisc(foo:end));
+      %c = sum(f_rj(1:(foo-1))./nedisc(1:(foo-1))) + sum(f_fj(foo:end)./nedisc(foo:end));
       c = sum(f_fj(1:(t_j-1))./nedisc(1:(t_j-1))) + sum(f_rj(t_j:end)./nedisc(t_j:end));
     end
-    C(i) = c;
+
+    %C(i) = c;
+
+    %% only getting C with certain t_j
+    cind = 2;
+    Ctitle = sprintf('tj = %d',cind);
+    if t_j == cind
+      C(i) = c;
+    end
+
     %v = f_rj(t_j:end)./edisc(t_j:end);
     %disp(v(1:15))
   %% benefit and buying
@@ -238,6 +254,7 @@ for god = 1:godsim
   %tjstemp = tjs;
   %tjstemp(tjstemp>1) = 0;
   %tjsrecep = tjsrecep + tjstemp;
+  fprintf("min(C)=%.2f, max(C)=%.2f\n",min(C),max(C));
   cint = max(C)-min(C);
   Lc = min(C) + cint/3; % low threshold for cost
   Hc = Lc + cint/3; % high threshold for cost
@@ -269,16 +286,18 @@ for god = 1:godsim
   %fprintf('cor(f,tj)=%.2f\n',cor(1,2));
   %fprintf('\n');
 
-  y = zeros(2,length(unique(tjs)));
-  temp = unique(tjs);
-  y(1,:) = unique(tjs);
-  for i = 1:length(unique(tjs))   
-    y(2,i) = sum(tjs==temp(i));
-  end
-  fprintf("tj,ratio\n");
-  for i = 1:length(unique(tjs))
-    fprintf('%d,%.2f\n',y(1,i),y(2,i)/length(tjs));
-  end
+  %% calculating tj ratio
+  %y = zeros(2,length(unique(tjs)));
+  %temp = unique(tjs);
+  %y(1,:) = unique(tjs);
+  %for i = 1:length(unique(tjs))   
+  %  y(2,i) = sum(tjs==temp(i));
+  %end
+  %fprintf("tj,ratio\n");
+  %for i = 1:length(unique(tjs))
+  %  fprintf('%d,%.2f\n',y(1,i),y(2,i)/length(tjs));
+  %end
+
   %fprintf('cumb = .%2f\n',cumb);
   %fprintf('mincval = %.2f, maxcval = %.2f\n',mcval(1),mcval(2));
   %fprintf("mean cval = %.2f\n",cvalm/simtime);
@@ -289,7 +308,7 @@ for god = 1:godsim
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   plotting = 1;
   if plotting == 1
-    what2pl = [0,4,11]; % [5,6,7];
+    what2pl = [0,10,11]; % [5,6,7];
     tiledlayout(length(what2pl),1)
     for pl = 1:length(what2pl)
       if what2pl(pl) == 0 % ff, fr
@@ -356,7 +375,10 @@ for god = 1:godsim
         xlabel('tj');
       elseif what2pl(pl) == 11 % C histogram
         nexttile
-        histogram(C);
+        histogram(C(C~=0)); % used when plotting only distribution with certain t_j
+        Ctitle = strcat(Ctitle, sprintf('af=%.1f,ar=%.1f, tj%d fr',af,ar,cind));
+        title(Ctitle)
+        %histogram(C);
         xlabel('C');
       else  % B histogram
         nexttile
