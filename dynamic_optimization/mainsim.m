@@ -7,7 +7,7 @@ mfBcor = 0;
 % Constant Parameters 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 pind = 1; % parameter index
-rng(1);
+%rng(1);
 timeline = param(pind);
 t = linspace(1,timeline,timeline);
 
@@ -239,11 +239,11 @@ for god = 1:godsim
     %C(i) = c;
 
     %% only getting C with certain t_j
-    cind = 1;
-    Ctitle = sprintf('tj = %d',cind);
-    if t_j == cind
-      C(i) = c;
-    end
+    %cind = 1;
+    %Ctitle = sprintf('tj = %d',cind);
+    %if t_j == cind
+    C(i) = c;
+    %end
 
     %v = f_rj(t_j:end)./edisc(t_j:end);
     %disp(v(1:15))
@@ -258,11 +258,7 @@ for god = 1:godsim
   %tjstemp = tjs;
   %tjstemp(tjstemp>1) = 0;
   %tjsrecep = tjsrecep + tjstemp;
-  fprintf("min(C)=%.2f, max(C)=%.2f\n",min(C),max(C));
-  cint = max(C)-min(C);
-  Lc = min(C) + cint/3; % low threshold for cost
-  Hc = Lc + cint/3; % high threshold for cost
-  %fprintf("Lc=%.2f, Hc=%.2f\n",Lc,Hc);
+  %fprintf("min(C)=%.2f, max(C)=%.2f\n",min(C),max(C));
   E = ben./C; % roi ratio
   Eint = max(E) - min(E);
   LE = min(E) + Eint/3;
@@ -276,7 +272,9 @@ for god = 1:godsim
     fundt(i) = fund;
   end
   strcumb(mod(god,length(code))+1) = strcumb(mod(god,length(code))+1) + cumb;
-  %fprintf("cumb=%.2f\n",cumb);
+  %fprintf('cumb=%.2f\n',cumb);
+  fprintf('bought %d times\n',sum(buy));
+  cumb = 0;
   %% calculate correlation btw f and C,ben, tjs.
   %fprintf("corelations between f and C,B,tj\n");
   cor = corrcoef(f(1:simtime),C);
@@ -396,15 +394,16 @@ for god = 1:godsim
       end
     end
   end
-
-  fprintf("god=%d\n",god);
+  if mod(god,100) == 0
+    fprintf('god=%d\n',god);
+  end
 end
 
 %tjsrecep = tjsrecep/(godsim/length(code));
 %plot(1:length(tjsrecep),tjsrecep);
 %xlabel('tjsrecep');
 strcumb = strcumb/(godsim/length(code));
-receptacle = {strcumb,t,ff,fr,fb,tjs,C,fundt,ben,buy,cind};
+receptacle = {strcumb,t,ff,fr,fb,tjs,C,fundt,ben,buy};
 %fprintf("str     mean cumb\n");
 %stratstr = {'CVAL','Lc','Hc','Lff','Hff','Lfr','Hfr','LE','HE'};
 %for i = 1:length(strcumb)

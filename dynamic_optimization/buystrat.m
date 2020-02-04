@@ -43,7 +43,7 @@ elseif code == 2 % buy when c low
 	  cumb = cumb + B;
 	  fund = fund - c;
 	  buy = [buy 1];
-	  %fprintf('bought at t=%d, cval=%.2f\n',i,cval);
+	  %fprintf('code=%d, bought, B=%.2f\n',code, B);
 	  %fprintf('remaining fund=%.2f\n',fund);
 	else
 	  buy = [buy 0];
@@ -56,7 +56,7 @@ elseif code == 3 % buy when cost high
 	  cumb = cumb + B;
 	  fund = fund - c;
 	  buy = [buy 1];
-	  %fprintf('bought at t=%d, cval=%.2f\n',i,cval);
+	  %fprintf('code=%d, bought, B=%.2f\n',code, B);
 	  %fprintf('remaining fund=%.2f\n',fund);
 	else
 	  buy = [buy 0];

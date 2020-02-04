@@ -9,12 +9,22 @@ C = receptacle{7};
 fundt = receptacle{8};
 ben = receptacle{9};
 buy = receptacle{10};
-cind = receptacle{11};
 
+tjv = 9;
 simtime = param(34);
-plw = [1,1000];
-what2pl = [0,11,9,14]; % [5,6,7];
-tiledlayout(length(what2pl),1)
+plw = [1,simtime];
+what2pl = [4,14,8,11]; % [5,6,7];
+if length(what2pl) <= 5 && any(what2pl == 12) ~= 1
+  tiledlayout(length(what2pl),1)
+else
+  if any(what2pl == 12)
+    pln = length(what2pl) - 1 + tjv; % plot number
+  else 
+    pln = length(what2pl);
+  end
+  tiledlayout(5,ceil(pln/5))
+end
+
 for pl = 1:length(what2pl)
   if what2pl(pl) == 0 % ff, fr
     nexttile
@@ -69,6 +79,7 @@ for pl = 1:length(what2pl)
     plot(t(plw(1):plw(2)),fundt);
     legend('fund');
     xlabel('time');
+    ylim([0 5000]);
   elseif what2pl(pl) == 9 % tj over time
     nexttile
     plot(t(plw(1):plw(2)),tjs(plw(1):plw(2)))
@@ -80,19 +91,39 @@ for pl = 1:length(what2pl)
     xlabel('tj');
   elseif what2pl(pl) == 11 % C histogram
     nexttile
-    histogram(C(C~=0)); % used when plotting only distribution with certain t_j
-    Ctitle = '';
-    Ctitle = strcat(Ctitle, sprintf('af=%.1f,ar=%.1f, tj%d fr',param(8),param(15),cind));
-    title(Ctitle)
+    histogram(C); % used when plotting only distribution with certain t_j
+    xlim([150,380]);
+    ylim([0 1000]);
+    %histogram(C);
+    xlabel('C');
+  elseif what2pl(pl) == 12 % C histogram
+    for j = 1:tjv
+      nexttile
+      I = find(tjs == j);
+      histogram(C(I)); % used when plotting only distribution with certain t_j
+      Ctitle = '';
+      Ctitle = strcat(Ctitle, sprintf('af=%.1f,ar=%.1f, tj%d fr',param(8),param(15),j));
+      title(Ctitle)
+      xlim([150,380]);
+      ylim([0 620]);
+      %histogram(C);
+      xlabel('C');
+    end
+  elseif what2pl(pl) == 13 % C histogram
+    nexttile
+    val = 1;
+    I = find(tjs == val);
+    histogram(C); % used when plotting only distribution with certain t_j
+    histogram(C(I)); % used when plotting only distribution with certain t_j
     xlim([150,380]);
     ylim([0 620]);
     %histogram(C);
     xlabel('C');
-  elseif what2pl(pl) == 12  % buying points
+  elseif what2pl(pl) == 14  % buying points
     nexttile
     scatter(t(plw(1):plw(2)),buy);
     legend('buying points')
-  elseif what2pl(pl) == 13 % B histogram
+  elseif what2pl(pl) == 15 % B histogram
     nexttile
     histogram(ben);
     xlabel('ben');
