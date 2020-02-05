@@ -4,10 +4,10 @@ clear all
 timeline = 800;
 %general economy
 a = 0.8;
-f0r = 30;
-f0 = f0r*(1-a);
-fsig2 = 10;
-sig = fsig2*(1-a^2);
+x0r = 30;
+x0 = x0r*(1-a);
+xsig2 = 10;
+sig = xsig2*(1-a^2);
 
 code = 1:9;
 
@@ -19,26 +19,26 @@ for i = 1:length(ab)
 	%forestry
 	lf = 0.7; %lambda
 	af = 0.4; %linspace(1,0,101);
-	ff0r = 25;
-	ff0 = ff0r*(1-lf*af);
-	ffsig2 = 2;
-	sigf = ffsig2*(1-lf^2*af^2);
-	factorf = lf*(1-af)*f0r/(1-af*lf);
+	xf0r = 25;
+	xf0 = xf0r*(1-lf*af);
+	xfsig2 = 2;
+	sigf = xfsig2*(1-lf^2*af^2);
+	factorf = lf*(1-af)*x0r/(1-af*lf);
 
 	%housing
 	lr = 0.7;
 	ar = 0.4;
-	fr0r = 25;
-	fr0 = fr0r*(1-lr*ar);
-	frsig2 = 2;
-	sigr = frsig2*(1-lr^2*ar^2);
+	xr0r = 25;
+	xr0 = fr0r*(1-lr*ar);
+	xrsig2 = 2;
+	sigr = xrsig2*(1-lr^2*ar^2);
 
 	%donation
 	lb = 0.7;
-	fb0r = 25;
-	fb0 = fb0r*(1-lb*ab(i));
-	fbsig2 = 2;
-	sigb = fbsig2*(1-lb^2*ab(i)^2);
+	xb0r = 25;
+	xb0 = xb0r*(1-lb*ab(i));
+	xbsig2 = 2;
+	sigb = xbsig2*(1-lb^2*ab(i)^2);
 
 	% buy strategy stuff
 	al = 1;
@@ -74,8 +74,8 @@ for i = 1:length(ab)
 
 
 
-	param = [timeline,a,f0r,f0,fsig2,sig,lf,af,ff0r,ff0,ffsig2,sigf,factorf,lr,ar,fr0r,fr0,frsig2,sigr,...
-	lb,ab(i),fb0r,fb0,fbsig2,sigb,al,be,godsimnum,period,lag,A,burnin,cvalth,simtime,fund,...
+	param = [timeline,a,x0r,x0,xsig2,sig,lf,af,xf0r,xf0,xfsig2,sigf,factorf,lr,ar,xr0r,xr0,xrsig2,sigr,...
+	lb,ab(i),xb0r,xb0,xbsig2,sigb,al,be,godsimnum,period,lag,A,burnin,cvalth,simtime,fund,...
 	cumb,bfn,rho,del,efmu,efsig2,ermu,ersig2,ch,b_def];
 	receptacle = mainsim(param,code);
 	strcumb = receptacle{1};
@@ -83,14 +83,14 @@ for i = 1:length(ab)
 end
 
 fprintf("cumb\n");
-fprintf("    af        CVAL       LC        Hc       Lff       Hff      Lfr      Hfr        LE        HE\n");
+fprintf("    af        CVAL       LC        Hc       Lxf       Hxf      Lxr      Hxr        LE        HE\n");
 display(M);
 
 fprintf("corr coeff\n");
-fprintf("    af        CVAL       LC        Hc       Lff       Hff      Lfr      Hfr        LE        HE\n");
+fprintf("    af        CVAL       LC        Hc       Lxf       Hxf      Lxr      Hxr        LE        HE\n");
 display(corrcoef(M));
 %fprintf("str     mean cumb\n");
-%stratstr = {'CVAL','Lc','Hc','Lff','Hff','Lfr','Hfr','LE','HE'};
+%stratstr = {'CVAL','Lc','Hc','Lxf','Hxf','Lxr','Hxr','LE','HE'};
 %for i = 1:length(strcumb)
 %  fprintf("%s       %.2f\n",stratstr{i},strcumb(i));
 %endn

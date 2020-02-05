@@ -1,46 +1,46 @@
 function [receptacle] = mainsim(param,code)
-mftjcor = 0;
-mfCcor = 0;
-mfBcor = 0;
+mxtjcor = 0;
+mxCcor = 0;
+mxBcor = 0;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Constant Parameters 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 pind = 1; % parameter index
-%rng(1);
+rng(1);
 timeline = param(pind);
 t = linspace(1,timeline,timeline);
 
 %general economy
 a = param(pind+1);
-f0r = param(pind+2);
-f0 = param(pind+3);
-fsig2 = param(pind+4);
+x0r = param(pind+2);
+x0 = param(pind+3);
+xsig2 = param(pind+4);
 sig = param(pind+5);
 
 %forestry
 lf = param(pind+6); %lambda
 af = param(pind+7);
-ff0r = param(pind+8);
-ff0 = param(pind+9);
-ffsig2 = param(pind+10);
+xf0r = param(pind+8);
+xf0 = param(pind+9);
+xfsig2 = param(pind+10);
 sigf = param(pind+11);
 factorf = param(pind+12);
 
 %housing
 lr = param(pind+13);
 ar = param(pind+14);
-fr0r = param(pind+15);
-fr0 = param(pind+16);
-frsig2 = param(pind+17);
+xr0r = param(pind+15);
+xr0 = param(pind+16);
+xrsig2 = param(pind+17);
 sigr = param(pind+18);
 
 %donation
 lb = param(pind+19);
 ab = param(pind+20);
-fb0r = param(pind+21);
-fb0 = param(pind+22);
-fbsig2 = param(pind+23);
+xb0r = param(pind+21);
+xb0 = param(pind+22);
+xbsig2 = param(pind+23);
 sigb = param(pind+24);
 
 % buy strategy stuff
@@ -51,7 +51,7 @@ be = param(pind+26);
 godsimnum = param(pind+27);
 godsim = length(code)*godsimnum;
 
-% params for deterministic periodic function for ff,fr,fb
+% params for deterministic periodic function for xf,xr,xb
 period = param(pind+28);
 lag = param(pind+29);
 A = param(pind+30); % amplitude
@@ -82,71 +82,71 @@ b_def = param(pind+44); % default b
 %tjsrecep = zeros(1,param(pind+));
 strcumb = zeros(1,length(code)); % strategy's cumulative benefit
 for god = 1:godsim
-  f = zeros(0,length(t));
-  ff = zeros(1,length(t));
-  fr = zeros(1,length(t));
-  fb = zeros(1,length(t));
-  regsin = 0; % 0=autoregression 1=sinusoidal (for ff,fr,fb)
+  x = zeros(0,length(t));
+  xf = zeros(1,length(t));
+  xr = zeros(1,length(t));
+  xb = zeros(1,length(t));
+  regsin = 0; % 0=autoregression 1=sinusoidal (for xf,xr,xb)
   if regsin == 0   
-    f(1) = (f0 + normrnd(0,1));
+    x(1) = (x0 + normrnd(0,1));
     for  i = 2:length(t)
-      f(i) = a*f(i-1) + (f0 + sig*normrnd(0,1));
+      x(i) = a*x(i-1) + (x0 + sig*normrnd(0,1));
     end
 
-    ff(1) = (ff0 + sigf*normrnd(0,1));
-    fb(1) = (fb0 + sigb*normrnd(0,1));
-    f(1) = (fr0 + sigr*normrnd(0,1));
+    xf(1) = (xf0 + sigf*normrnd(0,1));
+    xb(1) = (xb0 + sigb*normrnd(0,1));
+    xr(1) = (xr0 + sigr*normrnd(0,1));
     for i = 2:length(t)
-      ff(i) = lf*(af*ff(i-1) + (1-af)*(f(i) - f0r)) + (ff0 + sigf*normrnd(0,1));
-      fb(i) = lb*(ab*fb(i-1) + (1-ab)*(f(i) - f0r)) + (fb0 + sigb*normrnd(0,1));
-      fr(i) = lr*(ar*fr(i-1) + (1-ar)*(f(i) - f0r)) + (fr0 + sigr*normrnd(0,1));
+      xf(i) = lf*(af*xf(i-1) + (1-af)*(x(i) - x0r)) + (xf0 + sigf*normrnd(0,1));
+      xb(i) = lb*(ab*xb(i-1) + (1-ab)*(x(i) - x0r)) + (xb0 + sigb*normrnd(0,1));
+      xr(i) = lr*(ar*xr(i-1) + (1-ar)*(x(i) - x0r)) + (xr0 + sigr*normrnd(0,1));
     end
   else
-    f = f0r + A*cos(2*pi*(1:length(t))/period-pi);
-    ff = ff0r + A*cos(2*pi*(1:length(t))/period);
-    fr = fr0r + A*cos(2*pi*(1:length(t))/period-pi);
-    fb = fb0r + A*cos(2*pi*(1:length(t))/period-pi);
+    x = x0r + A*cos(2*pi*(1:length(t))/period-pi);
+    xf = xf0r + A*cos(2*pi*(1:length(t))/period);
+    xr = xr0r + A*cos(2*pi*(1:length(t))/period-pi);
+    xb = xb0r + A*cos(2*pi*(1:length(t))/period-pi);
   end
 
 
 
   %fprintf('\n');
-  %fprintf('analytic ff mean = %f\n', ff0r) %analytic ff mean
-  %fprintf('simulation ff mean = %f\n',mean(ff(200:800))) %simulation mean
+  %fprintf('analytic xf mean = %f\n', xf0r) %analytic xf mean
+  %fprintf('simulation xf mean = %f\n',mean(xf(200:800))) %simulation mean
 
-  %fprintf('analytic f mean = %f\n',f0r) %analytic ff mean
-  %fprintf('simulation f mean = %f\n',mean(f(200:800))) %simulation mean
+  %fprintf('analytic x mean = %f\n',x0r) %analytic xf mean
+  %fprintf('simulation x mean = %f\n',mean(x(200:800))) %simulation mean
   %fprintf('\n');
   %fprintf("correlations btw net returns\n");
-  %cor = corrcoef(ff,f);
-  %fprintf("cor(ff,f)= %.2f\n",cor(1,2))
-  %cor = corrcoef(fr,f);
-  %fprintf("cor(fr,f)= %.2f\n",cor(1,2))
-  %cor = corrcoef(fb,f);
-  %fprintf("cor(fb,f)= %.2f\n",cor(1,2))
+  %cor = corrcoef(xf,x);
+  %fprintf("cor(xf,x)= %.2f\n",cor(1,2))
+  %cor = corrcoef(xr,x);
+  %fprintf("cor(xr,x)= %.2f\n",cor(1,2))
+  %cor = corrcoef(xb,x);
+  %fprintf("cor(xb,x)= %.2f\n",cor(1,2))
   %fprintf("\n");
 
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   % simulation of tj, b, c, buying, etc.
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  f = f(burnin:end);
-  ff = ff(burnin:end);
-  fb = fb(burnin:end);
-  fr = fr(burnin:end);
+  x = x(burnin:end);
+  xf = xf(burnin:end);
+  xb = xb(burnin:end);
+  xr = xr(burnin:end);
 
-  Eff = ff0r;
-  Vff = ffsig2 + lf^2*(1-af)*fsig2/(1-af^2*lf^2);
-  Efr = fr0r;
-  Vfr = frsig2 + lr^2*(1-ar)*fsig2/(1-ar^2*lr^2);
-  Lff = norminv(1/3,Eff,Vff^(1/2)); % threshold for low ff
-  Hff = norminv(2/3,Eff,Vff^(1/2)); % threshold for high ff
-  Lfr = norminv(1/3,Efr,Vfr^(1/2)); % threshold for low fr
-  Hfr = norminv(2/3,Efr,Vfr^(1/2)); % threshold for high fr
-  Lf = norminv(1/3,f0r,fsig2^(1/2)); % threshold for low f
-  Hf = norminv(2/3,f0r,fsig2^(1/2)); % threshold for high f
+  Exf = xf0r;
+  Vxf = xfsig2 + lf^2*(1-af)*xsig2/(1-af^2*lf^2);
+  Exr = xr0r;
+  Vxr = xrsig2 + lr^2*(1-ar)*xsig2/(1-ar^2*lr^2);
+  Lxf = norminv(1/3,Exf,Vxf^(1/2)); % threshold for low xf
+  Hxf = norminv(2/3,Exf,Vxf^(1/2)); % threshold for high xf
+  Lxr = norminv(1/3,Exr,Vxr^(1/2)); % threshold for low xr
+  Hxr = norminv(2/3,Exr,Vxr^(1/2)); % threshold for high xr
+  Lx = norminv(1/3,x0r,xsig2^(1/2)); % threshold for low x
+  Hx = norminv(2/3,x0r,xsig2^(1/2)); % threshold for high x
   
-  edisc = repelem(1+rho,length(f)).^(0:(length(f)-1)); %economic discount rate.
-  ecodisc = repelem(1+del,length(f)).^(0:(length(f)-1)); %ecological discount rate
+  edisc = repelem(1+rho,length(x)).^(0:(length(x)-1)); %economic discount rate.
+  ecodisc = repelem(1+del,length(x)).^(0:(length(x)-1)); %ecological discount rate
 
   C = zeros(1,simtime);
   ben = zeros(1,simtime);
@@ -158,12 +158,12 @@ for god = 1:godsim
   for i = 1:simtime
     %fprintf('time step=%d\n',i);
     
-    nf = f(i:end);
-    nff = ff(i:end);
-    nfb = fb(i:end);
-    nfr = fr(i:end);
-    %fprintf('length of fb=%d\n',size(fb,2));
-    %fprintf('this yrs donation = %.2f\n',fb(1));
+    nx = x(i:end);
+    nxf = xf(i:end);
+    nxb = xb(i:end);
+    nxr = xr(i:end);
+    %fprintf('length of xb=%d\n',size(xb,2));
+    %fprintf('this yrs donation = %.2f\n',xb(1));
     % getting e_fj,e_rj, and b (if bfn=2)
    
 
@@ -183,36 +183,36 @@ for god = 1:godsim
     if bfn == 3
       b = b^(1/2);
     end
-    f_fj = nff + e_fj; 
-    f_fj(f_fj<0) = 0; % j's ff
-    f_rj = nfr + e_rj; 
-    f_rj(f_rj<0) = 0; % j's fr
+    x_fj = nxf + e_fj; 
+    x_fj(x_fj<0) = 0; % j's xf
+    x_rj = nxr + e_rj; 
+    x_rj(x_rj<0) = 0; % j's xr
 
 
     % getting clearing time t_j
-    t_jmethod = 0; % 0=earliest time its profitable, 1=time when its most profitable
+    t_jmethod = 1; % 0=earliest time its profitable, 1=time when its most profitable
     t_j = 1;
     if t_jmethod
       nedisc = edisc(1:end-i+1); % new economic discount rate for this sim.
-      tjoptim = sum((f_rj(t_j:end)-f_fj(t_j:end))./nedisc(1:(end-t_j+1))) - ch;
-      optimarray = zeros(1,(length(f_rj)-t_j+1));
+      tjoptim = sum((x_rj(t_j:end)-x_fj(t_j:end))./nedisc(1:(end-t_j+1))) - ch;
+      optimarray = zeros(1,(length(x_rj)-t_j+1));
       optimarray(1) = tjoptim;
       for oi = 2:length(optimarray)
-        optimarray(oi) = optimarray(oi-1) - (f_rj(oi)-f_fj(oi))/nedisc(oi);
+        optimarray(oi) = optimarray(oi-1) - (x_rj(oi)-x_fj(oi))/nedisc(oi);
       end
 
       [val, t_j] = max(optimarray);
-      if t_j > length(f_fj)
-        t_j = length(f_fj);
+      if t_j > length(x_fj)
+        t_j = length(x_fj);
       end
       if val < 0
-        t_j = length(f_fj);
+        t_j = length(x_fj);
       end
     else
       nedisc = edisc(1:end-i+1); % new economic discount rate for this sim.
-      tjoptim = sum((f_rj(t_j:end)-f_fj(t_j:end))./nedisc(1:(end-t_j+1))) - ch;
-      while tjoptim <= 0 && t_j <= length(f_fj)
-        tjoptim = tjoptim - (f_rj(t_j)-f_fj(t_j))/nedisc(t_j);
+      tjoptim = sum((x_rj(t_j:end)-x_fj(t_j:end))./nedisc(1:(end-t_j+1))) - ch;
+      while tjoptim <= 0 && t_j <= length(x_fj)
+        tjoptim = tjoptim - (x_rj(t_j)-x_fj(t_j))/nedisc(t_j);
         t_j = t_j + 1;
       end
     end
@@ -225,7 +225,7 @@ for god = 1:godsim
     %t_j = cind; %% test
     % cost
     if t_j == 1
-      c = sum(f_rj(t_j:end)./nedisc(t_j:end));
+      c = sum(x_rj(t_j:end)./nedisc(t_j:end));
       %c = sum(f_fj(t_j:end)./nedisc(t_j:end));
     else
       %c = sum(f_rj(1:end)./nedisc(1:end));
@@ -233,7 +233,7 @@ for god = 1:godsim
       %foo = 2;
       %c = sum(f_fj(1:(foo-1))./nedisc(1:(foo-1))) + sum(f_rj(foo:end)./nedisc(foo:end));
       %c = sum(f_rj(1:(foo-1))./nedisc(1:(foo-1))) + sum(f_fj(foo:end)./nedisc(foo:end));
-      c = sum(f_fj(1:(t_j-1))./nedisc(1:(t_j-1))) + sum(f_rj(t_j:end)./nedisc(t_j:end));
+      c = sum(x_fj(1:(t_j-1))./nedisc(1:(t_j-1))) + sum(x_rj(t_j:end)./nedisc(t_j:end));
     end
 
     %C(i) = c;
@@ -260,32 +260,28 @@ for god = 1:godsim
   %tjsrecep = tjsrecep + tjstemp;
   %fprintf("min(C)=%.2f, max(C)=%.2f\n",min(C),max(C));
   E = ben./C; % roi ratio
-  Eint = max(E) - min(E);
-  LE = min(E) + Eint/3;
-  HE = LE + Eint/3;
   
   %% evaluating and buying process
   for i = 1:simtime
-    fund = fund + fb(i); % add this yr's fund to the account
-    %[cumb,fund,buy] = buystrat(buy,code(8),cumb,fund,fb(i),ben(i),C(i),E(i),ff(i),fr(i),al,be,cvalth,Lc,Hc,Lff,Hff,Lfr,Hfr,Lf,Hf,LE,HE);
-    [cumb,fund,buy] = buystrat(buy,code(mod(god,length(code))+1),cumb,fund,fb(i),ben(i),C(i),E(i),ff(i),fr(i),al,be,cvalth,Lc,Hc,Lff,Hff,Lfr,Hfr,Lf,Hf,LE,HE);
-    fundt(i) = fund;
+    fund = fund + xb(i); % add this yr's fund to the account
+    %[cumb,fund,buy] = buystrat(buy,code(8),cumb,fund,xb(i),ben(i),C(i),E(i),xf(i),xr(i),al,be,cvalth,Lc,Hc,Lxf,Hxf,Lxr,Hxr,Lx,Hx,LE,HE);
+    [cumb,fund,buy] = buystrat(buy,code(mod(god,length(code))+1),cumb,fund,xb(i),ben(i),C(i),E(i),xf(i),xr(i),al,be,cvalth,mean(C),Lxf,Hxf,Lxr,Hxr,Lx,Hx,mean(E));
   end
   strcumb(mod(god,length(code))+1) = strcumb(mod(god,length(code))+1) + cumb;
   %fprintf('cumb=%.2f\n',cumb);
-  fprintf('bought %d times\n',sum(buy));
+  fprintf('bought %d times with code %d\n',sum(buy),code(mod(god,length(code))+1));
   cumb = 0;
   %% calculate correlation btw f and C,ben, tjs.
   %fprintf("corelations between f and C,B,tj\n");
-  cor = corrcoef(f(1:simtime),C);
-  mfCcor = mfCcor + cor(1,2);
-  %fprintf('cor(f,C)=%.2f\n',cor(1,2));
-  cor = corrcoef(f(1:simtime),ben);
-  mfBcor = mfBcor + cor(1,2);
-  %fprintf('cor((f(1:simtime),tjs);
-  cor = corrcoef(f(1:simtime),tjs);
-  mftjcor = mftjcor + cor(1,2);
-  %fprintf('cor(f,tj)=%.2f\n',cor(1,2));
+  cor = corrcoef(x(1:simtime),C);
+  mxCcor = mxCcor + cor(1,2);
+  %fprintf('cor(x,C)=%.2f\n',cor(1,2));
+  cor = corrcoef(x(1:simtime),ben);
+  mxBcor = mxBcor + cor(1,2);
+  %fprintf('cor((x(1:simtime),tjs);
+  cor = corrcoef(x(1:simtime),tjs);
+  mxtjcor = mxtjcor + cor(1,2);
+  %fprintf('cor(x,tj)=%.2f\n',cor(1,2));
   %fprintf('\n');
 
   %% calculating tj ratio
@@ -314,54 +310,54 @@ for god = 1:godsim
     what2pl = [0,11,9]; % [5,6,7];
     tiledlayout(length(what2pl),1)
     for pl = 1:length(what2pl)
-      if what2pl(pl) == 0 % ff, fr
+      if what2pl(pl) == 0 % xf, xr
         nexttile
-        plot(t(plw(1):plw(2)),ff(plw(1):plw(2)),'g');
+        plot(t(plw(1):plw(2)),xf(plw(1):plw(2)),'g');
         xlabel('time');
         ylabel('net return');
         hold on
-        plot(t(plw(1):plw(2)),fr(plw(1):plw(2)),'r');
-        legend('ff','fr');
+        plot(t(plw(1):plw(2)),xr(plw(1):plw(2)),'r');
+        legend('xf','xr');
         hold off
-      elseif what2pl(pl) == 1 %f, ff, fr, fb
+      elseif what2pl(pl) == 1 %x, xf, xr, xb
         nexttile
-        plot(t(plw(1):plw(2)),f(plw(1):plw(2)),'k');
+        plot(t(plw(1):plw(2)),x(plw(1):plw(2)),'k');
         xlabel('time');
         ylabel('net return');
         hold on
-        plot(t(plw(1):plw(2)),ff(plw(1):plw(2)),'g');
-        plot(t(plw(1):plw(2)),fr(plw(1):plw(2)),'r');
-        plot(t(plw(1):plw(2)),fb(plw(1):plw(2)),'b');
-        legend('f','ff','fr','fb');
+        plot(t(plw(1):plw(2)),xf(plw(1):plw(2)),'g');
+        plot(t(plw(1):plw(2)),xr(plw(1):plw(2)),'r');
+        plot(t(plw(1):plw(2)),xb(plw(1):plw(2)),'b');
+        legend('x','xf','xr','xb');
         hold off
-      elseif what2pl(pl) == 2 % fr-ff & f
+      elseif what2pl(pl) == 2 % xr-xf & x
         nexttile
-        plot(t(plw(1):plw(2)),(fr(plw(1):plw(2))-ff(plw(1):plw(2))));
-        %plot(t(plw(1):plw(2)),f(plw(1):plw(2)),'k');
+        plot(t(plw(1):plw(2)),(xr(plw(1):plw(2))-xf(plw(1):plw(2))));
+        %plot(t(plw(1):plw(2)),x(plw(1):plw(2)),'k');
         xlabel('time');
         ylabel('net return');
 
-      elseif what2pl(pl) == 3 % f
+      elseif what2pl(pl) == 3 % x
         nexttile 
-        plot(plw(1):plw(2),f(plw(1):plw(2)),'k');
-        legend('f');
+        plot(plw(1):plw(2),x(plw(1):plw(2)),'k');
+        legend('x');
       elseif what2pl(pl) == 4 % c
         %land cost
         nexttile
         plot(t(plw(1):plw(2)),C);%.2f\n',cor(1,2));
         legend('land cost');
-      elseif what2pl(pl) == 5 % ff
+      elseif what2pl(pl) == 5 % xf
         nexttile
-        plot(t(plw(1):plw(2)),ff(plw(1):plw(2)),'g');
-        legend('ff');
-      elseif what2pl(pl) == 6 % fr
+        plot(t(plw(1):plw(2)),xf(plw(1):plw(2)),'g');
+        legend('xf');
+      elseif what2pl(pl) == 6 % xr
         nexttile
-        plot(t(plw(1):plw(2)),fr(plw(1):plw(2)),'r');
-        legend('fr');
-      elseif what2pl(pl) == 7 % fb
+        plot(t(plw(1):plw(2)),xr(plw(1):plw(2)),'r');
+        legend('xr');
+      elseif what2pl(pl) == 7 % xb
         nexttile
-        plot(t(plw(1):plw(2)),fb(plw(1):plw(2)),'r');
-        legend('fb');
+        plot(t(plw(1):plw(2)),xb(plw(1):plw(2)),'r');
+        legend('xb');
       elseif what2pl(pl) == 8 % fund
         nexttile 
         plot(t(plw(1):plw(2)),fundt);
@@ -379,7 +375,7 @@ for god = 1:godsim
       elseif what2pl(pl) == 11 % C histogram
         nexttile
         histogram(C(C~=0)); % used when plotting only distribution with certain t_j
-        Ctitle = strcat(Ctitle, sprintf('af=%.1f,ar=%.1f, tj%d fr',af,ar,cind));
+        Ctitle = strcat(Ctitle, sprintf('af=%.1f,ar=%.1f, tj%d xr',af,ar,cind));
         title(Ctitle)
         %histogram(C);
         xlabel('C');
@@ -403,17 +399,17 @@ end
 %plot(1:length(tjsrecep),tjsrecep);
 %xlabel('tjsrecep');
 strcumb = strcumb/(godsim/length(code));
-receptacle = {strcumb,t,ff,fr,fb,tjs,C,fundt,ben,buy};
+receptacle = {strcumb,t,x,xf,xr,xb,tjs,C,fundt,ben,buy};
 %fprintf("str     mean cumb\n");
-%stratstr = {'CVAL','Lc','Hc','Lff','Hff','Lfr','Hfr','LE','HE'};
+%stratstr = {'CVAL','Lc','Hc','Lxf','Hxf','Lxr','Hxr','LE','HE'};
 %for i = 1:length(strcumb)
 %  fprintf("%s       %.2f\n",stratstr{i},strcumb(i));
 %end
 
 
-% fprintf('mean of cor(f,C)=%.2f\n',mfCcor/godsim);
-% fprintf('mean of cor(f,B)=%.2f\n',mfBcor/godsim);
-% fprintf('mean of cor(f,tj)=%.2f\n',mftjcor/godsim);
+% fprintf('mean of cor(x,C)=%.2f\n',mxCcor/godsim);
+% fprintf('mean of cor(x,B)=%.2f\n',mxBcor/godsim);
+% fprintf('mean of cor(x,tj)=%.2f\n',mxtjcor/godsim);
 %fprintf("mean tj=%.2f\n",sum(tjs)/simtime);
 %fprintf("pr(tj=1) = %.2f\n", length(tjs(tjs==1))/length(tjs));
 %fprintf("pr(tj=2) = %.2f\n", length(tjs(tjs==2))/length(tjs));

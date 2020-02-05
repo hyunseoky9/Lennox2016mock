@@ -1,14 +1,14 @@
-function [cumb,fund,buy] = buystrat(buy,code,cumb,fund,don,B,c,E,ff,fr,al,be,cvalth,Lc,Hc,Lff,Hff,Lfr,Hfr,Lf,Hf,LE,HE)
+function [cumb,fund,buy] = buystrat(buy,code,cumb,fund,don,B,c,E,xf,xr,al,be,cvalth,mc,Lxf,Hxf,Lxr,Hxr,Lx,Hx,me)
 %% buying strategy (bstrat):
 %% input
 %% code
 %% 1 = get cval (B/c)^alpha*(donation)^beta and buy above some threshold of cval
 %% 2 = buy when cost low
 %% 3 = buy when cost high
-%% 4 = buy when ff low
-%% 5 = buy when ff high
-%% 6 = buy when fr low
-%% 7 = buy when fr high
+%% 4 = buy when xf low
+%% 5 = buy when xf high
+%% 6 = buy when xr low
+%% 7 = buy when xr high
 %% 8 = buy when E low
 %% 9 = buy when E high
 %% don = this year's donation
@@ -39,7 +39,7 @@ if code == 1
 
 elseif code == 2 % buy when c low 
     %fprintf("c=%.2f, Lc=%.2f, fund=%.2f\n",c,Lc,fund);
-	if c <= Lc && c <= fund % buy
+	if c <= mc && c <= fund % buy
 	  cumb = cumb + B;
 	  fund = fund - c;
 	  buy = [buy 1];
@@ -52,7 +52,7 @@ elseif code == 2 % buy when c low
 	end
 
 elseif code == 3 % buy when cost high
-	if c >= Hc && c <= fund % buy
+	if c >= mc && c <= fund % buy
 	  cumb = cumb + B;
 	  fund = fund - c;
 	  buy = [buy 1];
@@ -64,8 +64,8 @@ elseif code == 3 % buy when cost high
 	  %fprintf('remaining fund=%.2f\n',fund);
 	end
 
-elseif code == 4 % buy when ff low
-	if ff <= Lff && c <= fund % buy
+elseif code == 4 % buy when xf low
+	if xf <= Lxf && c <= fund % buy
 	  cumb = cumb + B;
 	  fund = fund - c;
 	  buy = [buy 1];
@@ -76,8 +76,8 @@ elseif code == 4 % buy when ff low
 	  %fprintf('cost=%.2f',c);
 	  %fprintf('remaining fund=%.2f\n',fund);
 	end
-elseif code == 5 % buy when ff high
-	if ff >= Hff && c <= fund % buy
+elseif code == 5 % buy when xf high
+	if xf >= Hxf && c <= fund % buy
 	  cumb = cumb + B;
 	  fund = fund - c;
 	  buy = [buy 1];
@@ -88,8 +88,8 @@ elseif code == 5 % buy when ff high
 	  %fprintf('cost=%.2f',c);
 	  %fprintf('remaining fund=%.2f\n',fund);
 	end
-elseif code == 6 % buy when fr low
-	if fr <= Lfr && c <= fund % buy
+elseif code == 6 % buy when xr low
+	if xr <= Lxr && c <= fund % buy
 	  cumb = cumb + B;
 	  fund = fund - c;
 	  buy = [buy 1];
@@ -101,8 +101,8 @@ elseif code == 6 % buy when fr low
 	  %fprintf('remaining fund=%.2f\n',fund);
 	end
 
-elseif code == 7 % buy when fr high
-	if fr >= Hfr && c <= fund % buy
+elseif code == 7 % buy when xr high
+	if xr >= Hxr && c <= fund % buy
 	  cumb = cumb + B;
 	  fund = fund - c;
 	  buy = [buy 1];
@@ -114,7 +114,7 @@ elseif code == 7 % buy when fr high
 	  %fprintf('remaining fund=%.2f\n',fund);
 	end
 elseif code == 8 % buy when roi low
-	if E <= LE && c <= fund % buy
+	if E <= me && c <= fund % buy
 	  cumb = cumb + B;
 	  fund = fund - c;
 	  buy = [buy 1];
@@ -126,7 +126,7 @@ elseif code == 8 % buy when roi low
 	  %fprintf('remaining fund=%.2f\n',fund);
 	end	
 else % buy when roi high
-	if E >= LE && c <= fund % buy
+	if E >= me && c <= fund % buy
 	  cumb = cumb + B;
 	  fund = fund - c;
 	  buy = [buy 1];

@@ -4,35 +4,35 @@ timeline = 800
 
 %general economy
 a = 0.8;
-f0r = 30;
-f0 = f0r*(1-a);
-fsig2 = 10;
-sig = fsig2*(1-a^2);
+x0r = 30;
+x0 = x0r*(1-a);
+xsig2 = 10;
+sig = xsig2*(1-a^2);
 
 %forestry
 lf = 0.7; %lambda
 af = 0.4;
-ff0r = 25;
-ff0 = ff0r*(1-lf*af);
-ffsig2 = 2;
-sigf = ffsig2*(1-lf^2*af^2);
-factorf = lf*(1-af)*f0r/(1-af*lf);
+xf0r = 25;
+xf0 = xf0r*(1-lf*af);
+xfsig2 = 2;
+sigf = xfsig2*(1-lf^2*af^2);
+factorf = lf*(1-af)*x0r/(1-af*lf);
 
 %housing
 lr = 0.7;
 ar = 0.4;
-fr0r = 25;
-fr0 = fr0r*(1-lr*ar);
-frsig2 = 2;
-sigr = frsig2*(1-lr^2*ar^2);
+xr0r = 25;
+xr0 = xr0r*(1-lr*ar);
+xrsig2 = 2;
+sigr = xrsig2*(1-lr^2*ar^2);
 
 %donation
 lb = 0.7;
 ab = 0.9;
-fb0r = 25;
-fb0 = fb0r*(1-lb*ab);
-fbsig2 = 2;
-sigb = fbsig2*(1-lb^2*ab^2);
+xb0r = 25;
+xb0 = xb0r*(1-lb*ab);
+xbsig2 = 2;
+sigb = xbsig2*(1-lb^2*ab^2);
 
 % buy strategy stuff
 codenum = 9;
