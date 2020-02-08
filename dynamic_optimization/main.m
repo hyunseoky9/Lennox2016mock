@@ -35,7 +35,7 @@ xbsig2 = 2;
 sigb = xbsig2*(1-lb^2*ab^2);
 
 % buy strategy stuff
-code = [3];
+code = [2,3];
 al = 1;
 be = 1;
 
@@ -71,6 +71,7 @@ parambundle = {timeline,a,x0r,xsig2,lf,af,xf0r,xfsig2,lr,ar,xr0r,xrsig2,...
 lb,ab,xb0r,xbsig2,code,al,be,godsimnum,period,lag,A,burnin,cvalth,simtime,fund,...
 cumb,bfn,rho,del,efmu,efsig2,ermu,ersig2,ch,b_def};
 paramset = paramsetmaker(parambundle);
+
 stratstr = {'CVAL','Lc','Hc','Lxf','Hxf','Lxr','Hxr','LE','HE'};
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -100,10 +101,15 @@ stratstr = {'CVAL','Lc','Hc','Lxf','Hxf','Lxr','Hxr','LE','HE'};
 
 
 for i = 1:length(paramset);
+  param = paramset{i};
+  receptacle = mainsim(param);
+  strcumb = receptacle{1};
+end
+
 param = [timeline,a,x0r,xsig2,lf,af,xf0r,xfsig2,lr,ar,xr0r,xrsig2,...
-lb,ab,xb0r,xbsig2,code(1),al,be,godsimnum,period,lag,A,burnin,cvalth,simtime,fund,...
+lb,ab,xb0r,xbsig2,code(1),al(1),be,godsimnum,period,lag,A,burnin,cvalth,simtime,fund,...
 cumb,bfn,rho,del,efmu,efsig2,ermu,ersig2,ch,b_def];
-receptacle = mainsim(param,code);
+receptacle = mainsim(param);
 bleh = plotting(receptacle,param);
 
 strcumb = receptacle{1};
@@ -115,17 +121,12 @@ xb = receptacle{6};
 tjs = receptacle{7};
 C = receptacle{8};
 fundt = receptacle{9};
-ben = receptacle{10};   
+ben = receptacle{10};
 buy = receptacle{11};
-
-benhighsum = sum(ben(ben>=900));
-fprintf('benhighsum=%.2f. code %s\n',benhighsum,stratstr{code});
-
 
 %if mod(god,100) == 0
 %	fprintf('god=%d\n',god);
 %end
-
 fprintf("ar=%.2f, af=%.2f\n",ar,af);
 fprintf("str     mean cumb\n");
 for i = 1:length(strcumb)

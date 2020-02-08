@@ -1,4 +1,4 @@
-function [receptacle] = mainsim(param,code)
+function [receptacle] = mainsim(param)
 mxtjcor = 0;
 mxCcor = 0;
 mxBcor = 0;
@@ -72,7 +72,7 @@ pind = pind + 1;
 
 godsimnum = param(pind);
 pind = pind + 1;
-godsim = length(code)*godsimnum;
+godsim = godsimnum;
 
 % params for deterministic periodic function for xf,xr,xb
 period = param(pind);
@@ -120,7 +120,7 @@ pind = pind + 1;
 
 
 %tjsrecep = zeros(1,param(pind+));
-strcumb = zeros(1,length(code)); % strategy's cumulative benefit
+strcumb = 0; % strategy's cumulative benefit
 for god = 1:godsim
   x = zeros(0,length(t));
   xf = zeros(1,length(t));
@@ -307,14 +307,14 @@ for god = 1:godsim
   for i = 1:simtime
     fund = fund + xb(i); % add this yr's fund to the account
     %[cumb,fund,buy] = buystrat(buy,code(8),cumb,fund,xb(i),ben(i),C(i),E(i),xf(i),xr(i),al,be,cvalth,Lc,Hc,Lxf,Hxf,Lxr,Hxr,Lx,Hx,LE,HE);
-    [cumb,fund,buy,notenough,crinotmet] = buystrat(buy,code(mod(god,length(code))+1),cumb,fund,xb(i),ben(i),C(i),E(i),xf(i),xr(i),al,be,cvalth,mean(C),Lxf,Hxf,Lxr,Hxr,Lx,Hx,mean(E));
+    [cumb,fund,buy,notenough,crinotmet] = buystrat(buy,code,cumb,fund,xb(i),ben(i),C(i),E(i),xf(i),xr(i),al,be,cvalth,mean(C),Lxf,Hxf,Lxr,Hxr,Lx,Hx,mean(E));
     fundt(i) = fund;
     nenough = nenough + notenough;
     ncrinotmet = ncrinotmet + crinotmet;
   end
-  strcumb(mod(god,length(code))+1) = strcumb(mod(god,length(code))+1) + cumb;
+  strcumb = strcumb + cumb;
   %fprintf('cumb=%.2f\n',cumb);
-  fprintf('bought %d times. criteria not met %d times. fund not enough %d times. with code %s\n',sum(buy),ncrinotmet,nenough,stratstr{code(mod(god,length(code))+1)});
+  fprintf('bought %d times. criteria not met %d times. fund not enough %d times. with code %s\n',sum(buy),ncrinotmet,nenough,stratstr{code});
   cumb = 0;
   %% calculate correlation btw f and C,ben, tjs.
   %fprintf("corelations between f and C,B,tj\n");
@@ -351,6 +351,8 @@ end
 %tjsrecep = tjsrecep/(godsim/length(code));
 %plot(1:length(tjsrecep),tjsrecep);
 %xlabel('tjsrecep');
+
+strcumb = strcumb/godsim; % average over sim rep
 receptacle = {strcumb,t,x,xf,xr,xb,tjs,C,fundt,ben,buy,nenough,ncrinotmet};
 %fprintf("str     mean cumb\n");
 stratstr = {'CVAL','Lc','Hc','Lxf','Hxf','Lxr','Hxr','LE','HE'};

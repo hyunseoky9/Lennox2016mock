@@ -3,6 +3,8 @@ function [paramset] = paramsetmaker(parambundle)
 paramset = {};
 paramsetnum  = 1;
 
+
+% find parameters that are arrays
 arraycellidx = [];
 param = [];
 for i = 1:length(parambundle)
@@ -17,18 +19,25 @@ for i = 1:length(parambundle)
 end
 
 
-
+% make parameter sets.
 for i = 1:paramsetnum
   paramset{i} = param;
 end
 
-if isempty(arraycellidx)
+if isempty(arraycellidx) % if none are arrays
   paramset{1} = param;
+elseif length(arraycellidx) == 1 % if only one parameter is an array
+  for i = 1:length(parambundle{arraycellidx})
+    array = parambundle{arraycellidx};
+    param(arraycellidx) = array(i);
+    paramset{i} = param;
+  end
 else
   arrays = {};
   for i = 1:length(arraycellidx)
     arrays{i} = parambundle{arraycellidx(i)};
   end
+
   pset = recursion({},1,length(arraycellidx),arrays,[]);
   for i = 1:paramsetnum
     param(arraycellidx) = pset{i};
