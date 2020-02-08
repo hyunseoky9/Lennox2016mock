@@ -61,7 +61,7 @@ for pl = 1:length(what2pl)
   elseif what2pl(pl) == 4 % c
     %land cost
     nexttile
-    plot(t(plw(1):plw(2)),C);%.2f\n',cor(1,2));
+    plot(t(plw(1):plw(2)),C(plw(1):plw(2)));%.2f\n',cor(1,2));
     legend('land cost');
   elseif what2pl(pl) == 5 % xf
     nexttile
@@ -77,7 +77,7 @@ for pl = 1:length(what2pl)
     legend('xb');
   elseif what2pl(pl) == 8 % fund
     nexttile 
-    plot(t(plw(1):plw(2)),fundt);
+    plot(t(plw(1):plw(2)),fundt(plw(1):plw(2)));
     legend('fund');
     xlabel('time');
     ylim([0 5000]);
@@ -94,7 +94,7 @@ for pl = 1:length(what2pl)
   elseif what2pl(pl) == 11 % C histogram
     nexttile
     histogram(C); % used when plotting only distribution with certain t_j
-    xlim([150,380]);
+    xlim([200,400]);
     ylim([0 1000]);
     %histogram(C);
     xlabel('C');
@@ -107,7 +107,7 @@ for pl = 1:length(what2pl)
       Ctitle = '';
       Ctitle = strcat(Ctitle, sprintf('af=%.1f,ar=%.1f, tj=%d',param(8),param(15),j));
       title(Ctitle)
-      xlim([240,350]);
+      xlim([180,400]);
       %ylim([0 620]);
       %histogram(C);
       xlabel('C');
@@ -126,20 +126,21 @@ for pl = 1:length(what2pl)
     xlabel('C');
   elseif what2pl(pl) == 14  % buying points
     nexttile
-    scatter(t(plw(1):plw(2)),buy);
+    scatter(t(plw(1):plw(2)),buy(plw(1):plw(2)));
     legend('buying points')
   elseif what2pl(pl) == 15 % B histogram
     nexttile
     histogram(ben);
     xlabel('ben');
     title('histogram of B')
+    [N,edges] = histcounts(ben);
   elseif what2pl(pl) == 16 % histogram of ecological benefits of bought lands
     nexttile
     I = find(buy==1);
     histogram(ben(I));
     xlabel('ben')
     title('histogram of eco benefit of bought lands');
-  else % mean of xr's 10 steps ahead
+  elseif what2pl(pl) == 17 % mean of xr's 10 steps ahead
   	nexttile
   	xrm = zeros(1,(plw(2)-plw(1)+1));
   	for i = plw(1):plw(2)
@@ -149,6 +150,14 @@ for pl = 1:length(what2pl)
   	legend('xr fw mean');
     ylim([22 32]);
   	xlabel('time')
+  else % plot of accumulation of B of bought lands in descending order 
+    nexttile
+    I = find(buy==1);
+    sortben = sort(ben(I),'descend');
+    cum = cumsum(sortben);
+    upto = 100;
+    plot((1:upto),cum(1:upto));
+    title('accumulation of B of bought lands in descending order')
   end
 end
 

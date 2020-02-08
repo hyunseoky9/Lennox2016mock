@@ -1,4 +1,4 @@
-clear all
+%clear all
 
 timeline = 10000; %10000;
 %general economy
@@ -8,9 +8,10 @@ x0 = x0r*(1-a);
 xsig2 = 10;
 sig = xsig2*(1-a^2);
 
+
 %forestry
 lf = 0.7; %lambda
-af = 1;
+af = 0;
 xf0r = 25;
 xf0 = xf0r*(1-lf*af);
 xfsig2 = 2;
@@ -19,7 +20,7 @@ factorf = lf*(1-af)*x0r/(1-af*lf);
 
 %housing
 lr = 0.7;
-ar = 0;
+ar = 1;
 xr0r = 25;
 xr0 = xr0r*(1-lr*ar);
 xrsig2 = 2;
@@ -34,7 +35,7 @@ xbsig2 = 2;
 sigb = xbsig2*(1-lb^2*ab^2);
 
 % buy strategy stuff
-code = [2];
+code = [3];
 al = 1;
 be = 1;
 
@@ -66,6 +67,12 @@ ch = 0; % land change cost and option value
 
 b_def = 10; % default b
 
+parambundle = {timeline,a,x0r,xsig2,lf,af,xf0r,xfsig2,lr,ar,xr0r,xrsig2,...
+lb,ab,xb0r,xbsig2,code,al,be,godsimnum,period,lag,A,burnin,cvalth,simtime,fund,...
+cumb,bfn,rho,del,efmu,efsig2,ermu,ersig2,ch,b_def};
+paramset = paramsetmaker(parambundle);
+stratstr = {'CVAL','Lc','Hc','Lxf','Hxf','Lxr','Hxr','LE','HE'};
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% parameter changes
 %for i = 1:2
@@ -91,10 +98,11 @@ b_def = 10; % default b
 %end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-param = [timeline,a,x0r,x0,xsig2,sig,lf,af,xf0r,xf0,xfsig2,sigf,factorf,lr,ar,xr0r,xr0,xrsig2,sigr,...
-lb,ab,xb0r,xb0,xbsig2,sigb,al,be,godsimnum,period,lag,A,burnin,cvalth,simtime,fund,...
-cumb,bfn,rho,del,efmu,efsig2,ermu,ersig2,ch,b_def];
 
+for i = 1:length(paramset);
+param = [timeline,a,x0r,xsig2,lf,af,xf0r,xfsig2,lr,ar,xr0r,xrsig2,...
+lb,ab,xb0r,xbsig2,code(1),al,be,godsimnum,period,lag,A,burnin,cvalth,simtime,fund,...
+cumb,bfn,rho,del,efmu,efsig2,ermu,ersig2,ch,b_def];
 receptacle = mainsim(param,code);
 bleh = plotting(receptacle,param);
 
@@ -110,9 +118,16 @@ fundt = receptacle{9};
 ben = receptacle{10};   
 buy = receptacle{11};
 
+benhighsum = sum(ben(ben>=900));
+fprintf('benhighsum=%.2f. code %s\n',benhighsum,stratstr{code});
+
+
+%if mod(god,100) == 0
+%	fprintf('god=%d\n',god);
+%end
+
 fprintf("ar=%.2f, af=%.2f\n",ar,af);
 fprintf("str     mean cumb\n");
-stratstr = {'CVAL','Lc','Hc','Lxf','Hxf','Lxr','Hxr','LE','HE'};
 for i = 1:length(strcumb)
   fprintf("%s       %.2f\n",stratstr{code(i)},strcumb(i));
 end

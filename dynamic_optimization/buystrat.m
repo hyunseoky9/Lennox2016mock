@@ -1,4 +1,4 @@
-function [cumb,fund,buy] = buystrat(buy,code,cumb,fund,don,B,c,E,xf,xr,al,be,cvalth,mc,Lxf,Hxf,Lxr,Hxr,Lx,Hx,me)
+function [cumb,fund,buy,notenough,crinotmet] = buystrat(buy,code,cumb,fund,don,B,c,E,xf,xr,al,be,cvalth,mc,Lxf,Hxf,Lxr,Hxr,Lx,Hx,me)
 %% buying strategy (bstrat):
 %% input
 %% code
@@ -15,6 +15,11 @@ function [cumb,fund,buy] = buystrat(buy,code,cumb,fund,don,B,c,E,xf,xr,al,be,cva
 %% output
 %% cumb = cumulative benefit
 %% fund = remaining fund
+crinotmet = 0;
+notenough = 0;
+if c <= fund
+	notenough = 1;
+end
 if code == 1
 	cval = (B/c)^al*don^be; % conservation value
 
@@ -25,13 +30,18 @@ if code == 1
 	%if cval <= mcval(1)
 	%  mcval(1) = cval;
 	%end
-	if cval >= cvalth && c <= fund % buy
-	  cumb = cumb + B;
-	  fund = fund - c;
-	  buy = [buy 1];
+	if cval >= cvalth
+	  if c <= fund % buy
+		  cumb = cumb + B;
+		  fund = fund - c;
+		  buy = [buy 1];
 	  %fprintf('bought at t=%d, cval=%.2f\n',i,cval);
 	  %fprintf('remaining fund=%.2f\n',fund);
+	  else
+	  	buy = [buy 0];
+	  end
 	else
+	  crinotmet = 1;
 	  buy = [buy 0];
 	  %fprintf('cost=%.2f',c);
 	  %fprintf('remaining fund=%.2f\n',fund);
@@ -39,102 +49,142 @@ if code == 1
 
 elseif code == 2 % buy when c low 
     %fprintf("c=%.2f, Lc=%.2f, fund=%.2f\n",c,Lc,fund);
-	if c <= mc && c <= fund % buy
-	  cumb = cumb + B;
-	  fund = fund - c;
-	  buy = [buy 1];
+	if c <= mc 
+	  if c <= fund % buy
+		  cumb = cumb + B;
+		  fund = fund - c;
+		  buy = [buy 1];
+	  else
+	  	buy = [buy 0];
+	  end
 	  %fprintf('code=%d, bought, B=%.2f\n',code, B);
 	  %fprintf('remaining fund=%.2f\n',fund);
 	else
+	  crinotmet = 1;
 	  buy = [buy 0];
 	  %fprintf('cost=%.2f',c);
 	  %fprintf('remaining fund=%.2f\n',fund);
 	end
 
 elseif code == 3 % buy when cost high
-	if c >= mc && c <= fund % buy
-	  cumb = cumb + B;
-	  fund = fund - c;
-	  buy = [buy 1];
-	  %fprintf('code=%d, bought, B=%.2f\n',code, B);
+	if c >= mc
+	    if c <= fund % buy
+		  cumb = cumb + B;
+		  fund = fund - c;
+		  buy = [buy 1];
+		else
+		  	buy = [buy 0];
+		end
+  	  %fprintf('code=%d, bought, B=%.2f\n',code, B);
 	  %fprintf('remaining fund=%.2f\n',fund);
 	else
+	  crinotmet = 1;
 	  buy = [buy 0];
 	  %fprintf('cost=%.2f',c);
 	  %fprintf('remaining fund=%.2f\n',fund);
 	end
 
 elseif code == 4 % buy when xf low
-	if xf <= Lxf && c <= fund % buy
-	  cumb = cumb + B;
-	  fund = fund - c;
-	  buy = [buy 1];
+	if xf <= Lxf
+	    if c <= fund % buy
+			cumb = cumb + B;
+			fund = fund - c;
+			buy = [buy 1];
+		else
+			buy = [buy 0];
+		end
 	  %fprintf('bought at t=%d, cval=%.2f\n',i,cval);
 	  %fprintf('remaining fund=%.2f\n',fund);
 	else
-	  buy = [buy 0];
+		crinotmet = 1;
+		buy = [buy 0];
 	  %fprintf('cost=%.2f',c);
 	  %fprintf('remaining fund=%.2f\n',fund);
 	end
 elseif code == 5 % buy when xf high
-	if xf >= Hxf && c <= fund % buy
-	  cumb = cumb + B;
-	  fund = fund - c;
-	  buy = [buy 1];
+	if xf >= Hxf 
+	  if c <= fund % buy
+		cumb = cumb + B;
+		fund = fund - c;
+		buy = [buy 1];
+	  else
+	  	buy = [buy 0];
+	  end
 	  %fprintf('bought at t=%d, cval=%.2f\n',i,cval);
 	  %fprintf('remaining fund=%.2f\n',fund);
 	else
+	  crinotmet = 1;
 	  buy = [buy 0];
 	  %fprintf('cost=%.2f',c);
 	  %fprintf('remaining fund=%.2f\n',fund);
 	end
 elseif code == 6 % buy when xr low
-	if xr <= Lxr && c <= fund % buy
-	  cumb = cumb + B;
-	  fund = fund - c;
-	  buy = [buy 1];
+	if xr <= Lxr
+	  if c <= fund % buy
+		  cumb = cumb + B;
+		  fund = fund - c;
+		  buy = [buy 1];
+	  else
+	  	buy = [buy 0];
+	  end
 	  %fprintf('bought at t=%d, cval=%.2f\n',i,cval);
 	  %fprintf('remaining fund=%.2f\n',fund);
 	else
-	  buy = [buy 0];
+		crinotmet = 1;
+	    buy = [buy 0];
 	  %fprintf('cost=%.2f',c);
 	  %fprintf('remaining fund=%.2f\n',fund);
 	end
 
 elseif code == 7 % buy when xr high
-	if xr >= Hxr && c <= fund % buy
-	  cumb = cumb + B;
-	  fund = fund - c;
-	  buy = [buy 1];
+	if xr >= Hxr 
+	  if c <= fund % buy
+	    cumb = cumb + B;
+	    fund = fund - c;
+	    buy = [buy 1];
+	  else
+	  	buy = [buy 0];
+	  end
 	  %fprintf('bought at t=%d, cval=%.2f\n',i,cval);
 	  %fprintf('remaining fund=%.2f\n',fund);
 	else
+	  crinotmet = 1;
 	  buy = [buy 0];
 	  %fprintf('cost=%.2f',c);
 	  %fprintf('remaining fund=%.2f\n',fund);
 	end
 elseif code == 8 % buy when roi low
-	if E <= me && c <= fund % buy
-	  cumb = cumb + B;
-	  fund = fund - c;
-	  buy = [buy 1];
+	if E <= me 
+	  if c <= fund % buy
+	    cumb = cumb + B;
+	    fund = fund - c;
+	    buy = [buy 1];
+	  else
+	  	buy = [buy 0];
+	  end
 	  %fprintf('bought at t=%d, cval=%.2f\n',i,cval);
 	  %fprintf('remaining fund=%.2f\n',fund);
 	else
+	  crinotmet = 1;
 	  buy = [buy 0];
 	  %fprintf('cost=%.2f',c);
 	  %fprintf('remaining fund=%.2f\n',fund);
 	end	
 else % buy when roi high
-	if E >= me && c <= fund % buy
-	  cumb = cumb + B;
-	  fund = fund - c;
-	  buy = [buy 1];
+	if E >= me
+	  if c <= fund % buy
+	    cumb = cumb + B;
+	    fund = fund - c;
+	    buy = [buy 1];
+	  else
+	  	buy = [buy 0];
+	  end
 	  %fprintf('bought at t=%d, cval=%.2f\n',i,cval);
 	  %fprintf('remaining fund=%.2f\n',fund);
 	else
+	  crinotmet = 1;
 	  buy = [buy 0];
 	  %fprintf('cost=%.2f',c);
 	  %fprintf('remaining fund=%.2f\n',fund);
-	end	
+	end
 end

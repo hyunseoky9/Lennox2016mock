@@ -6,77 +6,117 @@ mxBcor = 0;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Constant Parameters 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%rng(1);
+
+stratstr = {'CVAL','Lc','Hc','Lxf','Hxf','Lxr','Hxr','LE','HE'};
+
 pind = 1; % parameter index
-rng(1);
 timeline = param(pind);
+pind = pind + 1;
 t = linspace(1,timeline,timeline);
 
 %general economy
-a = param(pind+1);
-x0r = param(pind+2);
-x0 = param(pind+3);
-xsig2 = param(pind+4);
-sig = param(pind+5);
+a = param(pind);
+pind = pind + 1;
+x0r = param(pind);
+pind = pind + 1;
+x0 = x0r*(1-a);
+xsig2 = param(pind);
+pind = pind + 1;
+sig = xsig2*(1-a^2);
 
 %forestry
-lf = param(pind+6); %lambda
-af = param(pind+7);
-xf0r = param(pind+8);
-xf0 = param(pind+9);
-xfsig2 = param(pind+10);
-sigf = param(pind+11);
-factorf = param(pind+12);
+lf = param(pind); %lambda
+pind = pind + 1;
+af = param(pind);
+pind = pind + 1;
+xf0r = param(pind);
+pind = pind + 1;
+xf0 = xf0r*(1-lf*af);
+xfsig2 = param(pind);
+pind = pind + 1;
+sigf = xfsig2*(1-lf^2*af^2);
+factorf = lf*(1-af)*x0r/(1-af*lf);
 
 %housing
-lr = param(pind+13);
-ar = param(pind+14);
-xr0r = param(pind+15);
-xr0 = param(pind+16);
-xrsig2 = param(pind+17);
-sigr = param(pind+18);
+lr = param(pind);
+pind = pind + 1;
+ar = param(pind);
+pind = pind + 1;
+xr0r = param(pind);
+pind = pind + 1;
+xr0 = xr0r*(1-lr*ar);
+xrsig2 = param(pind);
+pind = pind + 1;
+sigr = xrsig2*(1-lr^2*ar^2);
 
 %donation
-lb = param(pind+19);
-ab = param(pind+20);
-xb0r = param(pind+21);
-xb0 = param(pind+22);
-xbsig2 = param(pind+23);
-sigb = param(pind+24);
+lb = param(pind);
+pind = pind + 1;
+ab = param(pind);
+pind = pind + 1;
+xb0r = param(pind);
+pind = pind + 1;
+xb0 = xb0r*(1-lb*ab);
+xbsig2 = param(pind);
+pind = pind + 1;
+sigb = xbsig2*(1-lb^2*ab^2);
 
 % buy strategy stuff
-code = code;
-al = param(pind+25);
-be = param(pind+26);
+code = param(pind);
+pind = pind + 1;
+al = param(pind);
+pind = pind + 1;
+be = param(pind);
+pind = pind + 1;
 
-godsimnum = param(pind+27);
+godsimnum = param(pind);
+pind = pind + 1;
 godsim = length(code)*godsimnum;
 
 % params for deterministic periodic function for xf,xr,xb
-period = param(pind+28);
-lag = param(pind+29);
-A = param(pind+30); % amplitude
+period = param(pind);
+pind = pind + 1;
+lag = param(pind);
+pind = pind + 1;
+A = param(pind); % amplitude
+pind = pind + 1;
 
-burnin = param(pind+31); % burn in first few values of net return as they have not converged yet
+burnin = param(pind); % burn in first few values of net return as they have not converged yet
+pind = pind + 1;
 
-cvalth = param(pind+32); % buying threshold for buystrat code 1
+cvalth = param(pind); % buying threshold for buystrat code 1
+pind = pind + 1;
 
-simtime = param(pind+33); % number of buying opportunities
-fund = param(pind+34); % money saved
+simtime = param(pind); % number of buying opportunities
+pind = pind + 1;
+fund = param(pind); % money saved
+pind = pind + 1;
 fundt = zeros(1,simtime); % array for fund over time
-cumb = param(pind+35); % cummulative conservation value
+cumb = param(pind); % cummulative conservation value
+pind = pind + 1;
 
-bfn = param(pind+36); % benefit fn scheme. 1=constant, 2=normal var correlated to e_fj, 3=non-linear fn of 2
-rho = param(pind+37); %0.1; % economic discount rate
-del = param(pind+38); % ecological discount rate
+bfn = param(pind); % benefit fn scheme. 1=constant, 2=normal var correlated to e_fj, 3=non-linear fn of 2
+pind = pind + 1;
+rho = param(pind); %0.1; % economic discount rate
+pind = pind + 1;
+del = param(pind); % ecological discount rate
+pind = pind + 1;
 
-efmu = param(pind+39); % mean of ef
-efsig2 = param(pind+40); % var of ef
-ermu = param(pind+41); % mean of er
-ersig2 = param(pind+42); % var of er
+efmu = param(pind); % mean of ef
+pind = pind + 1;
+efsig2 = param(pind); % var of ef
+pind = pind + 1;
+ermu = param(pind); % mean of er
+pind = pind + 1;
+ersig2 = param(pind); % var of er
+pind = pind + 1;
 
-ch = param(pind+43); % land change cost and option value
+ch = param(pind); % land change cost and option value
+pind = pind + 1;
 
-b_def = param(pind+44); % default b
+b_def = param(pind); % default b
+pind = pind + 1;
 
 
 %tjsrecep = zeros(1,param(pind+));
@@ -190,7 +230,7 @@ for god = 1:godsim
 
 
     % getting clearing time t_j
-    t_jmethod = 1; % 0=earliest time its profitable, 1=time when its most profitable
+    t_jmethod = 0; % 0=earliest time its profitable, 1=time when its most profitable
     t_j = 1;
     if t_jmethod
       nedisc = edisc(1:end-i+1); % new economic discount rate for this sim.
@@ -262,14 +302,19 @@ for god = 1:godsim
   E = ben./C; % roi ratio
   
   %% evaluating and buying process
+  nenough = 0;
+  ncrinotmet = 0;
   for i = 1:simtime
     fund = fund + xb(i); % add this yr's fund to the account
     %[cumb,fund,buy] = buystrat(buy,code(8),cumb,fund,xb(i),ben(i),C(i),E(i),xf(i),xr(i),al,be,cvalth,Lc,Hc,Lxf,Hxf,Lxr,Hxr,Lx,Hx,LE,HE);
-    [cumb,fund,buy] = buystrat(buy,code(mod(god,length(code))+1),cumb,fund,xb(i),ben(i),C(i),E(i),xf(i),xr(i),al,be,cvalth,mean(C),Lxf,Hxf,Lxr,Hxr,Lx,Hx,mean(E));
+    [cumb,fund,buy,notenough,crinotmet] = buystrat(buy,code(mod(god,length(code))+1),cumb,fund,xb(i),ben(i),C(i),E(i),xf(i),xr(i),al,be,cvalth,mean(C),Lxf,Hxf,Lxr,Hxr,Lx,Hx,mean(E));
+    fundt(i) = fund;
+    nenough = nenough + notenough;
+    ncrinotmet = ncrinotmet + crinotmet;
   end
   strcumb(mod(god,length(code))+1) = strcumb(mod(god,length(code))+1) + cumb;
   %fprintf('cumb=%.2f\n',cumb);
-  fprintf('bought %d times with code %d\n',sum(buy),code(mod(god,length(code))+1));
+  fprintf('bought %d times. criteria not met %d times. fund not enough %d times. with code %s\n',sum(buy),ncrinotmet,nenough,stratstr{code(mod(god,length(code))+1)});
   cumb = 0;
   %% calculate correlation btw f and C,ben, tjs.
   %fprintf("corelations between f and C,B,tj\n");
@@ -301,107 +346,14 @@ for god = 1:godsim
   %fprintf("mean cval = %.2f\n",cvalm/simtime);
   %fprintf('buy=%d \n',find(buy > 0));
 
-  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  % PLOTTING
-  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  plotting = 0;
-  plw = [1,50];
-  if plotting == 1
-    what2pl = [0,11,9]; % [5,6,7];
-    tiledlayout(length(what2pl),1)
-    for pl = 1:length(what2pl)
-      if what2pl(pl) == 0 % xf, xr
-        nexttile
-        plot(t(plw(1):plw(2)),xf(plw(1):plw(2)),'g');
-        xlabel('time');
-        ylabel('net return');
-        hold on
-        plot(t(plw(1):plw(2)),xr(plw(1):plw(2)),'r');
-        legend('xf','xr');
-        hold off
-      elseif what2pl(pl) == 1 %x, xf, xr, xb
-        nexttile
-        plot(t(plw(1):plw(2)),x(plw(1):plw(2)),'k');
-        xlabel('time');
-        ylabel('net return');
-        hold on
-        plot(t(plw(1):plw(2)),xf(plw(1):plw(2)),'g');
-        plot(t(plw(1):plw(2)),xr(plw(1):plw(2)),'r');
-        plot(t(plw(1):plw(2)),xb(plw(1):plw(2)),'b');
-        legend('x','xf','xr','xb');
-        hold off
-      elseif what2pl(pl) == 2 % xr-xf & x
-        nexttile
-        plot(t(plw(1):plw(2)),(xr(plw(1):plw(2))-xf(plw(1):plw(2))));
-        %plot(t(plw(1):plw(2)),x(plw(1):plw(2)),'k');
-        xlabel('time');
-        ylabel('net return');
-
-      elseif what2pl(pl) == 3 % x
-        nexttile 
-        plot(plw(1):plw(2),x(plw(1):plw(2)),'k');
-        legend('x');
-      elseif what2pl(pl) == 4 % c
-        %land cost
-        nexttile
-        plot(t(plw(1):plw(2)),C);%.2f\n',cor(1,2));
-        legend('land cost');
-      elseif what2pl(pl) == 5 % xf
-        nexttile
-        plot(t(plw(1):plw(2)),xf(plw(1):plw(2)),'g');
-        legend('xf');
-      elseif what2pl(pl) == 6 % xr
-        nexttile
-        plot(t(plw(1):plw(2)),xr(plw(1):plw(2)),'r');
-        legend('xr');
-      elseif what2pl(pl) == 7 % xb
-        nexttile
-        plot(t(plw(1):plw(2)),xb(plw(1):plw(2)),'r');
-        legend('xb');
-      elseif what2pl(pl) == 8 % fund
-        nexttile 
-        plot(t(plw(1):plw(2)),fundt);
-        legend('fund');
-        xlabel('time');
-      elseif what2pl(pl) == 9 % tj over time
-        nexttile
-        plot(t(plw(1):plw(2)),tjs(plw(1):plw(2)))
-        legend('tj')
-        xlabel('time')
-      elseif what2pl(pl) == 10 % tj histogram
-        nexttile
-        histogram(tjs);
-        xlabel('tj');
-      elseif what2pl(pl) == 11 % C histogram
-        nexttile
-        histogram(C(C~=0)); % used when plotting only distribution with certain t_j
-        Ctitle = strcat(Ctitle, sprintf('af=%.1f,ar=%.1f, tj%d xr',af,ar,cind));
-        title(Ctitle)
-        %histogram(C);
-        xlabel('C');
-      elseif what2pl(pl) == 12  % buying points
-        nexttile
-        scatter(t(plw(1):plw(2)),buy);
-        legend('buying points')
-      else  % B histogram
-        nexttile
-        histogram(ben);
-        xlabel('ben');
-      end
-    end
-  end
-  if mod(god,100) == 0
-    fprintf('god=%d\n',god);
-  end
 end
 
 %tjsrecep = tjsrecep/(godsim/length(code));
 %plot(1:length(tjsrecep),tjsrecep);
 %xlabel('tjsrecep');
-strcumb = strcumb/(godsim/length(code));
-receptacle = {strcumb,t,x,xf,xr,xb,tjs,C,fundt,ben,buy};
+receptacle = {strcumb,t,x,xf,xr,xb,tjs,C,fundt,ben,buy,nenough,ncrinotmet};
 %fprintf("str     mean cumb\n");
-%stratstr = {'CVAL','Lc','Hc','Lxf','Hxf','Lxr','Hxr','LE','HE'};
+stratstr = {'CVAL','Lc','Hc','Lxf','Hxf','Lxr','Hxr','LE','HE'};
 %for i = 1:length(strcumb)
 %  fprintf("%s       %.2f\n",stratstr{i},strcumb(i));
 %end
