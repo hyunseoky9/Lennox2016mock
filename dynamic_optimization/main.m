@@ -35,7 +35,7 @@ xbsig2 = 2;
 %sigb = xbsig2*(1-lb^2*ab^2);
 
 % buy strategy stuff
-code = [2,3];
+code = [2,3,4];
 al = 1;
 be = 1;
 
@@ -128,11 +128,11 @@ for i = 1:length(paramset)
     for j = 1:length(what2pl)
       if what2pl(j) == 12 % if contingent c dist has to be plotted for multiple contingents
         for k = 1:length(tjv)
-          subplot(m,n,(2*k-1)+(i-1))
+          subplot(m,n,(pn*k-(pn-1))+(i-1))
           bleh = plotting(receptacle,param,what2pl(j),tjv(k));
         end
       else
-        subplot(m,n,(2*j-1)+(i-1))
+        subplot(m,n,(pn*j-(pn-1))+(i-1))
         bleh = plotting(receptacle,param,what2pl(j),0); %make it better
       end
     end
