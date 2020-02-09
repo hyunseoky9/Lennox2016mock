@@ -99,8 +99,11 @@ stratstr = {'CVAL','Lc','Hc','Lxf','Hxf','Lxr','Hxr','LE','HE'};
 %end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
+holdonplot = 0;
 for i = 1:length(paramset);
+  if holdonplot == 1
+    hold on
+  end
   param = paramset{i};
   receptacle = mainsim(param);
   strcumb = receptacle{1};
@@ -109,7 +112,11 @@ for i = 1:length(paramset);
     fprintf('str: %s \t mean cumb:%.2f\n',stratstr{param(17)},strcumb);
   end
   fprintf('\n\n');
-  bleh = plotting(receptacle,param); %make it better
+  if holdonplot == 1
+    foo = 1; %plotting
+  else
+    bleh = plotting(receptacle,param); %make it better
+  end
 end
 
 
