@@ -4,35 +4,35 @@ timeline = 10000; %10000;
 %general economy
 a = 0.8;
 x0r = 30;
-x0 = x0r*(1-a);
+%x0 = x0r*(1-a);
 xsig2 = 10;
-sig = xsig2*(1-a^2);
+%sig = xsig2*(1-a^2);
 
 
 %forestry
 lf = 0.7; %lambda
 af = 0;
 xf0r = 25;
-xf0 = xf0r*(1-lf*af);
+%xf0 = xf0r*(1-lf*af);
 xfsig2 = 2;
-sigf = xfsig2*(1-lf^2*af^2);
-factorf = lf*(1-af)*x0r/(1-af*lf);
+%sigf = xfsig2*(1-lf^2*af^2);
+%factorf = lf*(1-af)*x0r/(1-af*lf);
 
 %housing
 lr = 0.7;
 ar = 1;
 xr0r = 25;
-xr0 = xr0r*(1-lr*ar);
+%xr0 = xr0r*(1-lr*ar);
 xrsig2 = 2;
-sigr = xrsig2*(1-lr^2*ar^2);
+%sigr = xrsig2*(1-lr^2*ar^2);
 
 %donation
 lb = 0.7;
 ab = 0.9;
 xb0r = 25;
-xb0 = xb0r*(1-lb*ab);
+%xb0 = xb0r*(1-lb*ab);
 xbsig2 = 2;
-sigb = xbsig2*(1-lb^2*ab^2);
+%sigb = xbsig2*(1-lb^2*ab^2);
 
 % buy strategy stuff
 code = [2,3];
@@ -104,14 +104,21 @@ for i = 1:length(paramset);
   param = paramset{i};
   receptacle = mainsim(param);
   strcumb = receptacle{1};
+  fprintf('ar=%.2f, af=%.2f\n',param(10),param(6));
+  for i = 1:length(strcumb)
+    fprintf('str: %s \t mean cumb:%.2f\n',stratstr{param(17)},strcumb);
+  end
+  fprintf('\n\n');
+  bleh = plotting(receptacle,param); %make it better
 end
 
-param = [timeline,a,x0r,xsig2,lf,af,xf0r,xfsig2,lr,ar,xr0r,xrsig2,...
-lb,ab,xb0r,xbsig2,code(1),al(1),be,godsimnum,period,lag,A,burnin,cvalth,simtime,fund,...
-cumb,bfn,rho,del,efmu,efsig2,ermu,ersig2,ch,b_def];
-receptacle = mainsim(param);
-bleh = plotting(receptacle,param);
 
+%param = [timeline,a,x0r,xsig2,lf,af,xf0r,xfsig2,lr,ar,xr0r,xrsig2,...
+%lb,ab,xb0r,xbsig2,code(1),al(1),be,godsimnum,period,lag,A,burnin,cvalth,simtime,fund,...
+%cumb,bfn,rho,del,efmu,efsig2,ermu,ersig2,ch,b_def];
+%receptacle = mainsim(param);
+
+% data from last parameter set.
 strcumb = receptacle{1};
 t = receptacle{2};
 x = receptacle{3};
@@ -123,12 +130,3 @@ C = receptacle{8};
 fundt = receptacle{9};
 ben = receptacle{10};
 buy = receptacle{11};
-
-%if mod(god,100) == 0
-%	fprintf('god=%d\n',god);
-%end
-fprintf("ar=%.2f, af=%.2f\n",ar,af);
-fprintf("str     mean cumb\n");
-for i = 1:length(strcumb)
-  fprintf("%s       %.2f\n",stratstr{code(i)},strcumb(i));
-end

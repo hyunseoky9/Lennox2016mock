@@ -49,15 +49,14 @@ end
 
   function pset = recursion(pset,idx,finish,arrays,set)
     if idx == finish
-      for i = 1:length(arrays)
-        nset = [set arrays(i)];
+      for i = 1:length(arrays{1})
+        nset = [set arrays{1}(i)];
         pset{end+1} = nset;
       end
     else
-      for i = 1:length(arrays{idx})
-        array = arrays{idx};
-        nset = [set array(i)];
-        pset = recursion(pset,idx+1,finish,arrays{2:end},nset);
+      for i = 1:length(arrays{1})
+        nset = [set arrays{1}(i)];
+        pset = recursion(pset,idx+1,finish,{arrays{2:end}},nset);
       end
     end
   end

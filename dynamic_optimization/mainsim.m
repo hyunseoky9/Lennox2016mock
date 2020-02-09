@@ -346,6 +346,9 @@ for god = 1:godsim
   %fprintf("mean cval = %.2f\n",cvalm/simtime);
   %fprintf('buy=%d \n',find(buy > 0));
 
+  if mod(god,100) == 0
+   fprintf('god=%d\n',god);
+  end
 end
 
 %tjsrecep = tjsrecep/(godsim/length(code));
