@@ -74,49 +74,73 @@ paramset = paramsetmaker(parambundle);
 
 stratstr = {'CVAL','Lc','Hc','Lxf','Hxf','Lxr','Hxr','LE','HE'};
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% parameter changes
-%for i = 1:2
-%	if i == 1
-%		af = 1;
-%		ar = 0;
-%		param = [timeline,a,x0r,x0,xsig2,sig,lf,af,xf0r,xf0,xfsig2,sigf,factorf,lr,ar,xr0r,xr0,xrsig2,sigr,...
-%		lb,ab,xb0r,xb0,xbsig2,sigb,al,be,godsimnum,period,lag,A,burnin,cvalth,simtime,fund,...
-%		cumb,bfn,rho,del,efmu,efsig2,ermu,ersig2,ch,b_def];
-%		receptacle = mainsim(param,code);
-%		figure(i)
-%		bleh = plotting(receptacle,param);
-%	else 
-%		af = 0;
-%		ar = 1;
-%		param = [timeline,a,x0r,x0,xsig2,sig,lf,af,xf0r,xf0,xfsig2,sigf,factorf,lr,ar,xr0r,xr0,xrsig2,sigr,...
-%		lb,ab,xb0r,xb0,xbsig2,sigb,al,be,godsimnum,period,lag,A,burnin,cvalth,simtime,fund,...
-%		cumb,bfn,rho,del,efmu,efsig2,ermu,ersig2,ch,b_def];
-%		receptacle2 = mainsim(param,code);
-%		figure(i)
-%		bleh = plotting(receptacle2,param);
-%	end
-%end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Plotting and simulation
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-holdonplot = 0;
-for i = 1:length(paramset);
-  if holdonplot == 1
-    hold on
-  end
+holdonplot = 0; % when plotting things on a same plot
+if holdonplot == 1
+  hold on
+end
+what2pl = [12]; % plot index
+tjv = [1,3,5,7];
+pn = length(paramset); % number of parameter sets.
+%if length(what2pl) <= 5 && any(what2pl == 12) ~= 1
+%  tiledlayout(length(what2pl),pn)
+%else
+%  if any(what2pl == 12)
+%    pln = length(what2pl) - 1 + length(tjv); % plot number
+%  else 
+%    pln = length(what2pl);
+%  end
+%  tiledlayout(5,ceil(pln/5)*pn)
+%end
+if any(what2pl == 12)
+  m = length(what2pl) - 1 + length(tjv);
+else
+  m = length(what2pl);
+end
+n = length(paramset);
+
+
+%% IDEA: how about enabling you giving out idea on how you want the plot to look like using hold and whatever to make the figure you want in any form?
+
+for i = 1:length(paramset)
+  % actual simulation
   param = paramset{i};
   receptacle = mainsim(param);
   strcumb = receptacle{1};
+
+  % print outs
   fprintf('ar=%.2f, af=%.2f\n',param(10),param(6));
-  for i = 1:length(strcumb)
+  for j = 1:length(strcumb)
     fprintf('str: %s \t mean cumb:%.2f\n',stratstr{param(17)},strcumb);
   end
   fprintf('\n\n');
+
+  %% making data files
+
+  %% plotting 
+  %sgtitle('param');
   if holdonplot == 1
-    foo = 1; %plotting
+    bleh = plotting(receptacle,param,11,2);
   else
-    bleh = plotting(receptacle,param); %make it better
+    for j = 1:length(what2pl)
+      if what2pl(j) == 12 % if contingent c dist has to be plotted for multiple contingents
+        for k = 1:length(tjv)
+          subplot(m,n,(2*k-1)+(i-1))
+          bleh = plotting(receptacle,param,what2pl(j),tjv(k));
+        end
+      else
+        subplot(m,n,(2*j-1)+(i-1))
+        bleh = plotting(receptacle,param,what2pl(j),0); %make it better
+      end
+    end
   end
+end
+
+if holdonplot== 1
+  hold off
 end
 
 
