@@ -35,7 +35,7 @@ xbsig2 = 2;
 %sigb = xbsig2*(1-lb^2*ab^2);
 
 % buy strategy stuff
-code = [2];
+code = [2,3,4];
 al = 1;
 be = 1;
 
@@ -73,9 +73,7 @@ cumb,bfn,rho,del,efmu,efsig2,ermu,ersig2,ch,b_def};
 paramset = paramsetmaker(parambundle);
 
 stratstr = {'CVAL','Lc','Hc','Lxf','Hxf','Lxr','Hxr','LE','HE'};
-pname = {'timeline','a','x0r','xsig2','lf','af','xf0r','xfsig2','lr','ar','xr0r','xrsig2',...
-'lb','ab','xb0r','xbsig2','code','al','be','godsimnum','period','lag','A','burnin','cvalth','simtime','fund',...
-'cumb','bfn','rho','del','efmu','efsig2','ermu','ersig2','ch','b_def'};
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Plotting and simulation
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -86,7 +84,17 @@ if holdonplot == 1
 end
 what2pl = [12]; % plot index
 tjv = [1,3,5,7];
-pn = 0;
+pn = length(paramset); % number of parameter sets.
+%if length(what2pl) <= 5 && any(what2pl == 12) ~= 1
+%  tiledlayout(length(what2pl),pn)
+%else
+%  if any(what2pl == 12)
+%    pln = length(what2pl) - 1 + length(tjv); % plot number
+%  else 
+%    pln = length(what2pl);
+%  end
+%  tiledlayout(5,ceil(pln/5)*pn)
+%end
 if any(what2pl == 12)
   m = length(what2pl) - 1 + length(tjv);
 else
@@ -95,40 +103,13 @@ end
 n = length(paramset);
 
 
-% strategy result data
-interestp = [6,10,17]; %param interested in displaying 
-filename = strcat('./data/st.csv');
-fileID0 = fopen(filename,'w');
-for i = 1:length(parambundle)
-  fprintf(fileID0,'# %.3f\n',parambundle{i});
-end
-header = sprintf('%s,',pname{interestp});
-header = header(1:(end-1));
-fprintf(fileID0,header);
-
+%% IDEA: how about enabling you giving out idea on how you want the plot to look like using hold and whatever to make the figure you want in any form?
 
 for i = 1:length(paramset)
   % actual simulation
   param = paramset{i};
   receptacle = mainsim(param);
   strcumb = receptacle{1};
-
-  %% write out data
-  % strategy result
-  l = strcat(sprintf('%.2f,',param(interestp)),receptacle{1});
-  fprintf(fileID0,l);
-  % simulation data
-  fileparam = sprintf('%.2f,',param(interestp))
-  filename = strcat('./data/',fileparam,'.csv');
-  fileID = fopen(filename,'w');
-  st = param(26); %simtime
-  fprintf(fileID,'#');
-  fprintf(fileID,'%.3f  ',param);
-  fprintf(fileID,'\n');
-  fprintf(fileID,'t,x,xf,xr,xb,tjs,C,fundt,ben,buy\n');
-  fprintf(fileID,'%d,%.2f,%.2f,%.2f,%.2f,%d,%.2f,%.2f,%.2f,%d\n',...
-    [receptacle{2}(1:st);receptacle{3}(1:st);receptacle{4}(1:st);receptacle{5}(1:st);receptacle{6}(1:st);receptacle{7};receptacle{8};receptacle{9};receptacle{10};receptacle{11}]); %t,x,xf,xr,xb,fundt,tjs,C,ben,buy
-  fclose(fileID);
 
   % print outs
   fprintf('ar=%.2f, af=%.2f\n',param(10),param(6));
@@ -158,7 +139,6 @@ for i = 1:length(paramset)
   end
 end
 
-fclose(fileID0);
 if holdonplot== 1
   hold off
 end
