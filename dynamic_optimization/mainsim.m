@@ -314,7 +314,7 @@ for god = 1:godsim
   end
   strcumb = strcumb + cumb;
   %fprintf('cumb=%.2f\n',cumb);
-  fprintf('bought %d times. criteria not met %d times. fund not enough %d times. with code %s\n',sum(buy),ncrinotmet,nenough,stratstr{code});
+  %fprintf('bought %d times. criteria not met %d times. fund not enough %d times. with code %s\n',sum(buy),ncrinotmet,nenough,stratstr{code});
   cumb = 0;
   %% calculate correlation btw f and C,ben, tjs.
   %fprintf("corelations between f and C,B,tj\n");

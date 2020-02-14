@@ -1,6 +1,6 @@
 %clear all
 
-timeline = 10000; %10000;
+timeline = 800; %10000;
 %general economy
 a = 0.8;
 x0r = 30;
@@ -8,13 +8,13 @@ xsig2 = 10;
 
 %forestry
 lf = 0.7; %lambda
-af = 0;
+af = linspace(0,1,11);
 xf0r = 25;
 xfsig2 = 2;
 
 %housing
 lr = 0.7;
-ar = 1;
+ar = linspace(0,1,11);
 xr0r = 25;
 xrsig2 = 2;
 
@@ -25,11 +25,11 @@ xb0r = 25;
 xbsig2 = 2;
 
 % buy strategy stuff
-code = [2,3];
+code = [1,2,3];
 al = 1;
 be = 1;
 
-godsimnum = 1;
+godsimnum = 1000;
 
 period = 10;
 lag = 0;
@@ -39,7 +39,7 @@ burnin = 201; % burn in first few values of net return as they have not converge
 
 cvalth = 0; % buying threshold for buystrat code 1
 
-simtime = 9500; % number of buying opportunities
+simtime = 300; % number of buying opportunities
 fund = 0; % money saved
 cumb = 0; % cummulative conservation value
 
@@ -97,9 +97,9 @@ for i = 1:length(paramset)
   wr(interestp,parambundle,pname,receptacle,param,2,0); % write simulation data
 
   % print outs
-  fprintf('ar=%.2f, af=%.2f\n',param(10),param(6));
+  fprintf('ar=%.2f, af=%.2f, str= %s\n',param(10),param(6),stratstr{param(17)});
   for j = 1:length(strcumb)
-    fprintf('str: %s \t mean cumb:%.2f\n',stratstr{param(17)},receptacle{1});
+    fprintf('mean cumb:%.2f\n',receptacle{1});
   end
   fprintf('\n\n');
 
@@ -121,7 +121,7 @@ for i = 1:length(paramset)
       end
     end
   end
-  
+
 end
 
 if holdonplot== 1
