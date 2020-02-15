@@ -63,8 +63,6 @@ pind = pind + 1;
 sigb = xbsig2*(1-lb^2*ab^2);
 
 % buy strategy stuff
-code = param(pind);
-pind = pind + 1;
 al = param(pind);
 pind = pind + 1;
 be = param(pind);
@@ -116,6 +114,13 @@ ch = param(pind); % land change cost and option value
 pind = pind + 1;
 
 b_def = param(pind); % default b
+pind = pind + 1;
+t_jmethod = 1;
+pind = pind + 1;
+intrate = 0;
+pind = pind + 1;
+
+code = param(pind);
 pind = pind + 1;
 
 
@@ -178,12 +183,12 @@ for god = 1:godsim
   Vxf = xfsig2 + lf^2*(1-af)*xsig2/(1-af^2*lf^2);
   Exr = xr0r;
   Vxr = xrsig2 + lr^2*(1-ar)*xsig2/(1-ar^2*lr^2);
-  Lxf = norminv(1/3,Exf,Vxf^(1/2)); % threshold for low xf
-  Hxf = norminv(2/3,Exf,Vxf^(1/2)); % threshold for high xf
-  Lxr = norminv(1/3,Exr,Vxr^(1/2)); % threshold for low xr
-  Hxr = norminv(2/3,Exr,Vxr^(1/2)); % threshold for high xr
-  Lx = norminv(1/3,x0r,xsig2^(1/2)); % threshold for low x
-  Hx = norminv(2/3,x0r,xsig2^(1/2)); % threshold for high x
+  Lxf = Exf; %norminv(1/3,Exf,Vxf^(1/2)); % threshold for low xf
+  Hxf = Exf; %norminv(2/3,Exf,Vxf^(1/2)); % threshold for high xf
+  Lxr = Exr; %norminv(1/3,Exr,Vxr^(1/2)); % threshold for low xr
+  Hxr = Exr; %norminv(2/3,Exr,Vxr^(1/2)); % threshold for high xr
+  Lx = x0r; %norminv(1/3,x0r,xsig2^(1/2)); % threshold for low x
+  Hx = x0r; %norminv(2/3,x0r,xsig2^(1/2)); % threshold for high x
   
   edisc = repelem(1+rho,length(x)).^(0:(length(x)-1)); %economic discount rate.
   ecodisc = repelem(1+del,length(x)).^(0:(length(x)-1)); %ecological discount rate
@@ -230,7 +235,6 @@ for god = 1:godsim
 
 
     % getting clearing time t_j
-    t_jmethod = 0; % 0=earliest time its profitable, 1=time when its most profitable
     t_j = 1;
     if t_jmethod
       nedisc = edisc(1:end-i+1); % new economic discount rate for this sim.
@@ -304,10 +308,14 @@ for god = 1:godsim
   %% evaluating and buying process
   nenough = 0;
   ncrinotmet = 0;
+  mc = mean(C);
+  mB = mean(ben);
+  me = mean(E);
   for i = 1:simtime
     fund = fund + xb(i); % add this yr's fund to the account
     %[cumb,fund,buy] = buystrat(buy,code(8),cumb,fund,xb(i),ben(i),C(i),E(i),xf(i),xr(i),al,be,cvalth,Lc,Hc,Lxf,Hxf,Lxr,Hxr,Lx,Hx,LE,HE);
-    [cumb,fund,buy,notenough,crinotmet] = buystrat(buy,code,cumb,fund,xb(i),ben(i),C(i),E(i),xf(i),xr(i),al,be,cvalth,mean(C),Lxf,Hxf,Lxr,Hxr,Lx,Hx,mean(E));
+    [cumb,fund,buy,notenough,crinotmet] = buystrat(buy,code,cumb,fund,xb(i),ben(i),C(i),E(i),xf(i),xr(i),al,be,cvalth,mc,Lxf,Hxf,Lxr,Hxr,Lx,Hx,me,mB);
+    fund = fund*(1+intrate);
     fundt(i) = fund;
     nenough = nenough + notenough;
     ncrinotmet = ncrinotmet + crinotmet;
@@ -318,14 +326,14 @@ for god = 1:godsim
   cumb = 0;
   %% calculate correlation btw f and C,ben, tjs.
   %fprintf("corelations between f and C,B,tj\n");
-  cor = corrcoef(x(1:simtime),C);
-  mxCcor = mxCcor + cor(1,2);
+  %cor = corrcoef(x(1:simtime),C);
+  %mxCcor = mxCcor + cor(1,2);
   %fprintf('cor(x,C)=%.2f\n',cor(1,2));
-  cor = corrcoef(x(1:simtime),ben);
-  mxBcor = mxBcor + cor(1,2);
+  %cor = corrcoef(x(1:simtime),ben);
+  %mxBcor = mxBcor + cor(1,2);
   %fprintf('cor((x(1:simtime),tjs);
-  cor = corrcoef(x(1:simtime),tjs);
-  mxtjcor = mxtjcor + cor(1,2);
+  %cor = corrcoef(x(1:simtime),tjs);
+  %mxtjcor = mxtjcor + cor(1,2);
   %fprintf('cor(x,tj)=%.2f\n',cor(1,2));
   %fprintf('\n');
 

@@ -1,13 +1,15 @@
-function fileID = wr(interestp,parambundle,pname,receptacle,param,type,cont)
+function filenum = wr(interestp,parambundle,pname,receptacle,param,type,cont,filenum)
+  simdata = 0;
   if type == 1 % writes out files for simulation's conservation benefit result
-    name = './data/st.csv';
+    name = './data/st0.csv';
     if ~cont
-      if isfile(name)
-        x = input('file exists, overwrite? 1=yes 0=no\n');
-        if ~x
-          fprintf('function terminated\n');
-          return
-        end
+      filenum = 0;
+      while isfile(name)
+        name = sprintf('./data/st%d.csv',filenum);
+        filenum = filenum + 1;
+      end
+      if filenum > 0
+        filenum = filenum - 1;
       end
       filename = strcat(name);
       fileID = fopen(filename,'w');
@@ -20,15 +22,16 @@ function fileID = wr(interestp,parambundle,pname,receptacle,param,type,cont)
       fprintf(fileID,header);
       fclose(fileID);
     elseif cont
+      name = sprintf('./data/st%d.csv',filenum);
       fileID = fopen(name,'a+');
       l = sprintf('%.2f,',[param(interestp),receptacle{1}]);
       l = strcat(l(1:end-1),'\n');
       fprintf(fileID,l);
       fclose(fileID);
     end
-  else % writes out files of simulation data (t,xb,xr, etc.)
+  elseif type == 0 && simdata % writes out files of simulation data (t,xb,xr, etc.)
     fileparam = sprintf('%.2f,',param(interestp));
-    filename = strcat('./data/',fileparam,'.csv');
+    filename = strcat('./data/',fileparam(1:end-1),'.csv');
     fileID = fopen(filename,'w');
     for i = 1:length(parambundle)
       l = sprintf('%.3f,',parambundle{i});
