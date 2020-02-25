@@ -1,4 +1,4 @@
-function [paramset] = paramsetmaker(parambundle)
+function [paramset] = paramsetmaker(parambundle,pname,ppair)
 % makes set of parameter vector with all the element combinations.
 paramset = {};
 paramsetnum  = 1;
@@ -60,4 +60,5 @@ end
       end
     end
   end
+
 end

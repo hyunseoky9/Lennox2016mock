@@ -96,6 +96,7 @@ for pl = 1:length(what2pl)
   elseif what2pl(pl) == 11 % C histogram
     %nexttile
     histogram(C); % used when plotting only distribution with certain t_j
+    fprintf('length(C)=%d\n',length(C));
     xlim([200,400]);
     ylim([0 1000]);
     %histogram(C);
@@ -140,6 +141,10 @@ for pl = 1:length(what2pl)
   	legend('xr fw mean');
     ylim([22 32]);
   	xlabel('time')
+  elseif what2pl(pl) == 17
+    plot(C,ben);
+    words = sprintf('cost and benefit plot corr=%.2f',corrcoef(C,ben));
+    title(words);
   else % plot of accumulation of B of bought lands in descending order 
     %nexttile
     I = find(buy==1);

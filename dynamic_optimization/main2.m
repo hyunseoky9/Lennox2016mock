@@ -1,5 +1,5 @@
 %clear all
-msg = 'scenario 5 budget correlated to economy';
+msg = 'scenario 1-4 default';
 timeline = 800; %10000;
 %general economy
 a = 0.8;
@@ -8,19 +8,19 @@ xsig2 = 10;
 
 %forestry
 lf = 0.7; %lambda
-af = [1];
+af = [0,1];
 xf0r = 25;
-xfsig2 = 7;
+xfsig2 = 2;
 
 %housing
 lr = 0.7;
-ar = [1];
+ar = [0,1];
 xr0r = 25;
-xrsig2 = 7;
+xrsig2 = 2;
 
 %donation
 lb = 0.7;
-ab = 0.0;
+ab = 0.9;
 xb0r = 25;
 xbsig2 = 2;
 
@@ -58,9 +58,7 @@ b_def = 10; % default b
 t_jmethod = 1; % 0=earliest time its profitable, 1=time when its most profitable
 intrate = 0.5;
 
-code = [1,2,3,9,13]; % buy strategy stuff
-
-paired = {'xfsig2','xrsig2','x'};
+code = [12,13]; % buy strategy stuff
 
 parambundle = {timeline,a,x0r,xsig2,lf,af,xf0r,xfsig2,lr,ar,xr0r,xrsig2,...
 lb,ab,xb0r,xbsig2,al,be,godsimnum,period,lag,A,burnin,cvalth,simtime,fund,...
@@ -71,14 +69,13 @@ pname = {'timeline','a','x0r','xsig2','lf','af','xf0r','xfsig2','lr','ar','xr0r'
 'lb','ab','xb0r','xbsig2','al','be','godsimnum','period','lag','A','burnin','cvalth','simtime','fund',...
 'cumb','bfn','rho','del','efmu','efsig2','ermu','ersig2','ch','b_def','t_jmethod','intrate','code'};
 paramset = paramsetmaker(parambundle,pname,paired);
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Plotting and simulation
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 iwantplot = 0;
 holdonplot = 0; % when plotting things on a same plot
-what2pl = [1,11]; % plot index
+what2pl = [0,11]; % plot index
 tjv = [1,3,5,7];
 
 if iwantplot
