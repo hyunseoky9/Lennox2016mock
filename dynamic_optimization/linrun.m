@@ -1,2 +1,4 @@
+p1;
 main;
-main2;
+p2;
+main;

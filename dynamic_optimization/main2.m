@@ -60,6 +60,8 @@ intrate = 0.5;
 
 code = [12,13]; % buy strategy stuff
 
+
+
 parambundle = {timeline,a,x0r,xsig2,lf,af,xf0r,xfsig2,lr,ar,xr0r,xrsig2,...
 lb,ab,xb0r,xbsig2,al,be,godsimnum,period,lag,A,burnin,cvalth,simtime,fund,...
 cumb,bfn,rho,del,efmu,efsig2,ermu,ersig2,ch,b_def,t_jmethod,intrate,code};
