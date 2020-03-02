@@ -141,9 +141,20 @@ for pl = 1:length(what2pl)
   	legend('xr fw mean');
     ylim([22 32]);
   	xlabel('time')
-  elseif what2pl(pl) == 17
-    plot(C,ben);
-    words = sprintf('cost and benefit plot corr=%.2f',corrcoef(C,ben));
+  elseif what2pl(pl) == 17 % cost and benefit correlation
+    scatter(C,ben);
+    hold on
+    mc = mean(C);
+    mb = mean(ben);
+    me = mean(ben/C);
+    plot(linspace(mc,mc,2),linspace(min(ben),max(ben),2));
+    plot(linspace(min(C),max(C),2),linspace(mb,mb,2));
+    plot(linspace(min(C),max(C),2),linspace(me*min(C),me*max(C),2));
+    hold off
+    xlabel('C');
+    ylabel('B');
+    cor = corrcoef(C,ben);
+    words = sprintf('C&ben corr=%.2f',cor(1,2));
     title(words);
   else % plot of accumulation of B of bought lands in descending order 
     %nexttile

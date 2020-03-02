@@ -1,20 +1,20 @@
 parambundle = {timeline,a,x0r,xsig2,lf,af,xf0r,xfsig2,lr,ar,xr0r,xrsig2,...
 lb,ab,xb0r,xbsig2,al,be,godsimnum,period,lag,A,burnin,cvalth,simtime,fund,...
-cumb,bfn,rho,del,efmu,efsig2,ermu,ersig2,ch,b_def,t_jmethod,intrate,code};
+cumb,bfn,rho,del,efmu,efsig2,ermu,ersig2,ch,b_def,t_jmethod,intrate,simver,code};
 
 stratstr = {'CVAL','Lc','Hc','Lxf','Hxf','Lxr','Hxr','LE','HE','HB','LB','Hx','Lx'};
 pname = {'timeline','a','x0r','xsig2','lf','af','xf0r','xfsig2','lr','ar','xr0r','xrsig2',...
 'lb','ab','xb0r','xbsig2','al','be','godsimnum','period','lag','A','burnin','cvalth','simtime','fund',...
-'cumb','bfn','rho','del','efmu','efsig2','ermu','ersig2','ch','b_def','t_jmethod','intrate','code'};
+'cumb','bfn','rho','del','efmu','efsig2','ermu','ersig2','ch','b_def','t_jmethod','intrate','simver','code'};
 paramset = paramsetmaker(parambundle,pname);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Plotting and simulation
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-iwantplot = 0;
+iwantplot = 1;
 holdonplot = 0; % when plotting things on a same plot
-what2pl = [1,11]; % plot index
+what2pl = [17]; % plot index
 tjv = [1,3,5,7];
 
 if iwantplot
@@ -38,8 +38,12 @@ filenum = wr(interestp,parambundle,pname,1,1,1,0,0,msg);
 for i = 1:length(paramset)
   % simulation
   param = paramset{i};
-  receptacle = mainsim(param); % receptacle = {strcubm,t,x,xf,xr,xb,tjs,C,fundt,ben,buy}
-
+  if simver == 1
+    receptacle = godinfosim(param); % receptacle = {strcubm,t,x,xf,xr,xb,tjs,C,fundt,ben,buy}
+  else
+    receptacle = perfinfosim(param);
+  end
+  
   % simulation
   wr(interestp,parambundle,pname,receptacle,param,1,1,filenum); % write strategy result
   wr(interestp,parambundle,pname,receptacle,param,2,0,filenum); % write simulation data

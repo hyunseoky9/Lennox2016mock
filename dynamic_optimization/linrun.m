@@ -1,4 +1,2 @@
-p1;
-main;
-p2;
+run('./params/p2.m');
 main;
