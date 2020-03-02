@@ -250,7 +250,7 @@ for god = 1:godsim
       PVarray = zeros(1,(length(x_rj)-t_j+1)); % array for PVdiff at all time steps after current time step
       PVarray(1) = PVdiff;
       for oi = 2:length(PVarray)
-        PVarray(oi) = PVarray(oi-1) - (x_rj(oi-1)-x_fj(oi-1))/nedisc(oi-1);
+        PVarray(oi) = PVarray(oi-1) - (x_rj(oi)-x_fj(oi))/nedisc(oi);
       end
 
       [val, t_j] = max(PVarray);

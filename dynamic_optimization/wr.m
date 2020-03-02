@@ -1,4 +1,4 @@
-function filenum = wr(interestp,parambundle,pname,receptacle,param,type,cont,filenum,msg)
+function filenum = wr(interestp,parambundle,pname,receptacle,param,type,cont,filenum)
   simdata = 0;
   if type == 1 % writes out files for simulation's conservation benefit result
     name = './data/st0.csv';
@@ -13,7 +13,6 @@ function filenum = wr(interestp,parambundle,pname,receptacle,param,type,cont,fil
       end
       filename = strcat(name);
       fileID = fopen(filename,'w');
-      fprintf(fileID,'# %s\n',msg);
       for i = 1:length(parambundle)
         l = sprintf('%.3f,',parambundle{i});
         fprintf(fileID,'# %s: %s\n',pname{i},l(1:end-1));

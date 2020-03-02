@@ -1,4 +1,4 @@
-function [cumb,fund,buy,notenough,crinotmet] = buystrat(buy,code,cumb,fund,don,B,c,E,x,xf,xr,al,be,cvalth,mc,Lxf,Hxf,Lxr,Hxr,Lx,Hx,me,mB)
+function [cumb,fund,buy,notenough,crinotmet] = buystrat(buy,code,cumb,fund,don,B,c,E,xf,xr,al,be,cvalth,mc,Lxf,Hxf,Lxr,Hxr,Lx,Hx,me,mB)
 %% buying strategy (bstrat):
 %% input
 %% code
@@ -206,40 +206,6 @@ elseif code == 10 % buy when B is high
   end
 elseif code == 11 % buy when B is low
   if B >= mB
-    if c <= fund % buy
-      cumb = cumb + B;
-      fund = fund - c;
-      buy = [buy 1];
-    else
-      buy = [buy 0];
-    end
-    %fprintf('bought at t=%d, cval=%.2f\n',i,cval);
-    %fprintf('remaining fund=%.2f\n',fund);
-  else
-    crinotmet = 1;
-    buy = [buy 0];
-    %fprintf('cost=%.2f',c);
-    %fprintf('remaining fund=%.2f\n',fund);
-  end
-elseif code == 12 % buy when x is high
-  if x >= Hx
-    if c <= fund % buy
-      cumb = cumb + B;
-      fund = fund - c;
-      buy = [buy 1];
-    else
-      buy = [buy 0];
-    end
-    %fprintf('bought at t=%d, cval=%.2f\n',i,cval);
-    %fprintf('remaining fund=%.2f\n',fund);
-  else
-    crinotmet = 1;
-    buy = [buy 0];
-    %fprintf('cost=%.2f',c);
-    %fprintf('remaining fund=%.2f\n',fund);
-  end
-elseif code == 13 % buy when x is low
-  if x >= Lx
     if c <= fund % buy
       cumb = cumb + B;
       fund = fund - c;
