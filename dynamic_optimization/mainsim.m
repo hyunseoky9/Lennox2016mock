@@ -124,6 +124,17 @@ code = param(pind);
 pind = pind + 1;
 
 
+Exf = xf0r;
+Vxf = xfsig2 + lf^2*(1-af)*xsig2/(1-af^2*lf^2);
+Exr = xr0r;
+Vxr = xrsig2 + lr^2*(1-ar)*xsig2/(1-ar^2*lr^2);
+Lxf = Exf; %norminv(1/3,Exf,Vxf^(1/2)); % threshold for low xf
+Hxf = Exf; %norminv(2/3,Exf,Vxf^(1/2)); % threshold for high xf
+Lxr = Exr; %norminv(1/3,Exr,Vxr^(1/2)); % threshold for low xr
+Hxr = Exr; %norminv(2/3,Exr,Vxr^(1/2)); % threshold for high xr
+Lx = x0r; %norminv(1/3,x0r,xsig2^(1/2)); % threshold for low x
+Hx = x0r; %norminv(2/3,x0r,xsig2^(1/2)); % threshold for high x
+
 %tjsrecep = zeros(1,param(pind+));
 strcumb = 0; % strategy's cumulative benefit
 for god = 1:godsim
@@ -178,17 +189,6 @@ for god = 1:godsim
   xf = xf(burnin:end);
   xb = xb(burnin:end);
   xr = xr(burnin:end);
-
-  Exf = xf0r;
-  Vxf = xfsig2 + lf^2*(1-af)*xsig2/(1-af^2*lf^2);
-  Exr = xr0r;
-  Vxr = xrsig2 + lr^2*(1-ar)*xsig2/(1-ar^2*lr^2);
-  Lxf = Exf; %norminv(1/3,Exf,Vxf^(1/2)); % threshold for low xf
-  Hxf = Exf; %norminv(2/3,Exf,Vxf^(1/2)); % threshold for high xf
-  Lxr = Exr; %norminv(1/3,Exr,Vxr^(1/2)); % threshold for low xr
-  Hxr = Exr; %norminv(2/3,Exr,Vxr^(1/2)); % threshold for high xr
-  Lx = x0r; %norminv(1/3,x0r,xsig2^(1/2)); % threshold for low x
-  Hx = x0r; %norminv(2/3,x0r,xsig2^(1/2)); % threshold for high x
   
   edisc = repelem(1+rho,length(x)).^(0:(length(x)-1)); %economic discount rate.
   ecodisc = repelem(1+del,length(x)).^(0:(length(x)-1)); %ecological discount rate
@@ -197,8 +197,8 @@ for god = 1:godsim
   ben = zeros(1,simtime);
   tjs = zeros(1,simtime);
   buy = [];
-  mcval = [Inf 0];
-  cvalm = 0;
+  %mcval = [Inf 0];
+  %cvalm = 0;
   %% tj and cost 
   for i = 1:simtime
     %fprintf('time step=%d\n',i);
@@ -314,7 +314,7 @@ for god = 1:godsim
   for i = 1:simtime
     fund = fund + xb(i); % add this yr's fund to the account
     %[cumb,fund,buy] = buystrat(buy,code(8),cumb,fund,xb(i),ben(i),C(i),E(i),xf(i),xr(i),al,be,cvalth,Lc,Hc,Lxf,Hxf,Lxr,Hxr,Lx,Hx,LE,HE);
-    [cumb,fund,buy,notenough,crinotmet] = buystrat(buy,code,cumb,fund,xb(i),ben(i),C(i),E(i),xf(i),xr(i),al,be,cvalth,mc,Lxf,Hxf,Lxr,Hxr,Lx,Hx,me,mB);
+    [cumb,fund,buy,notenough,crinotmet] = buystrat(buy,code,cumb,fund,xb(i),ben(i),C(i),E(i),x(i),xf(i),xr(i),al,be,cvalth,mc,Lxf,Hxf,Lxr,Hxr,Lx,Hx,me,mB);
     fund = fund*(1+intrate);
     fundt(i) = fund;
     nenough = nenough + notenough;
@@ -355,9 +355,15 @@ for god = 1:godsim
   %fprintf('buy=%d \n',find(buy > 0));
 
   if mod(god,100) == 0
-   fprintf('god=%d\n',god);
+    if god == 100
+      nchar = fprintf('god=%d',god);
+    elseif god >= 100
+      fprintf(repmat('\b', 1, nchar));
+      fprintf('god=%d',god);
+    end
   end
 end
+fprintf('\n');
 
 %tjsrecep = tjsrecep/(godsim/length(code));
 %plot(1:length(tjsrecep),tjsrecep);

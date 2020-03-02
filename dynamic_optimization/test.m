@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 a = 0.8;
 x0r = 30;
 xsig2 = 10;
@@ -33,13 +32,3 @@ for i = 1:100
 end
 
 plot(1:100,Exf);
-=======
-efmu = 0;
-efsig = 1;
-mu = [efmu 10];
-sigma = [1 0.8; 0.8 1];
-R = mvnrnd(mu,sigma,1);
-e_fj = R(1); % indiv forest var
-b = R(2); % for benefit
-R
->>>>>>> parent of 9232945... its been awhile...

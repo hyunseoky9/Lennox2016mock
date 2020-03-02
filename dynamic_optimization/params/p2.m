@@ -7,13 +7,13 @@ xsig2 = 10;
 
 %forestry
 lf = 0.7; %lambda
-af = [0,1];
+af = [1];
 xf0r = 25;
 xfsig2 = 7;
 
 %housing
 lr = 0.7;
-ar = [0,1];
+ar = [1];
 xr0r = 25;
 xrsig2 = 7;
 

@@ -2,7 +2,7 @@ parambundle = {timeline,a,x0r,xsig2,lf,af,xf0r,xfsig2,lr,ar,xr0r,xrsig2,...
 lb,ab,xb0r,xbsig2,al,be,godsimnum,period,lag,A,burnin,cvalth,simtime,fund,...
 cumb,bfn,rho,del,efmu,efsig2,ermu,ersig2,ch,b_def,t_jmethod,intrate,simver,code};
 
-stratstr = {'CVAL','Lc','Hc','Lxf','Hxf','Lxr','Hxr','LE','HE'};
+stratstr = {'CVAL','Lc','Hc','Lxf','Hxf','Lxr','Hxr','LE','HE','HB','LB','Hx','Lx'};
 pname = {'timeline','a','x0r','xsig2','lf','af','xf0r','xfsig2','lr','ar','xr0r','xrsig2',...
 'lb','ab','xb0r','xbsig2','al','be','godsimnum','period','lag','A','burnin','cvalth','simtime','fund',...
 'cumb','bfn','rho','del','efmu','efsig2','ermu','ersig2','ch','b_def','t_jmethod','intrate','simver','code'};
@@ -18,23 +18,21 @@ what2pl = [17]; % plot index
 tjv = [1,3,5,7];
 
 if iwantplot
+  % mxn plot where m is number of things to plot and n is number of parameter set
   if any(what2pl == 12)
     m = length(what2pl) - 1 + length(tjv);
   else
     m = length(what2pl);
   end
   n = length(paramset);
-  holdonplot = 0; % when plotting things on a same plot
   if holdonplot == 1
     hold on
   end
 end
 
-
 % initialize data files
 interestp = interested_parameters(parambundle); %param interested in displaying 
-filenum = wr(interestp,parambundle,pname,1,1,1,0,0);
-
+filenum = wr(interestp,parambundle,pname,1,1,1,0,0,msg);
 
 %% Simulation
 for i = 1:length(paramset)
