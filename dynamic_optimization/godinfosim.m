@@ -211,7 +211,6 @@ for god = 1:godsim
   for i = 1:simtime
     %fprintf('time step=%d\n',i);
     
-    nx = x(i:end);
     nxf = xf(i:end);
     nxb = xb(i:end);
     nxr = xr(i:end);

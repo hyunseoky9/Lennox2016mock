@@ -210,11 +210,10 @@ for god = 1:godsim
   %% tj and cost 
   for i = 1:simtime
     %fprintf('time step=%d\n',i);
-    
-    nx = x(i:end);
-    nxf = xf(i:end);
-    nxb = xb(i:end);
-    nxr = xr(i:end);
+        
+    nxf = zeros([1 length(xf)]);
+    nxb = zeros([1 length(xb)]);
+    nxr = zeros([1 length(xb)]);
 
     e_rj = normrnd(ermu,ersig2); % indiv dev var
 
