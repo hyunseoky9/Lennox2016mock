@@ -41,7 +41,7 @@ for i = 1:length(paramset)
   if simver == 1
     receptacle = godinfosim(param); % receptacle = {strcubm,t,x,xf,xr,xb,tjs,C,fundt,ben,buy}
   else
-    receptacle = perfinfosim(param);
+    receptacle = imperfinfosim(param);
   end
   
   % simulation
