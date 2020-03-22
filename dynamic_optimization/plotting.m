@@ -96,7 +96,7 @@ for pl = 1:length(what2pl)
   elseif what2pl(pl) == 11 % C histogram
     %nexttile
     histogram(C); % used when plotting only distribution with certain t_j
-    fprintf('length(C)=%d\n',length(C));
+    %fprintf('length(C)=%d\n',length(C));
     xlim([200,400]);
     ylim([0 1000]);
     %histogram(C);

@@ -8,7 +8,7 @@ function [receptacle] = godinfosim(param)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %rng(1);
 
-stratstr = {'CVAL','Lc','Hc','Lxf','Hxf','Lxr','Hxr','LE','HE'};
+stratstr = {'CVAL','Lc','Hc','Lxf','Hxf','Lxr','Hxr','LE','HE','HB','LB','Hx','Lx'};
 
 pind = 1; % parameter index
 timeline = param(pind);
@@ -244,29 +244,30 @@ for god = 1:godsim
 
     % getting clearing time t_j
     t_j = 1;
-    nedisc = edisc(1:end-i+1); % new economic discount rate array for this sim.
-    if t_jmethod % max profitable to develop
-      PVdiff = sum((x_rj(t_j:end)-x_fj(t_j:end))./nedisc(t_j:end)) - ch; % present value difference since t_j
-      PVarray = zeros(1,(length(x_rj)-t_j+1)); % array for PVdiff at all time steps after current time step
-      PVarray(1) = PVdiff;
-      for oi = 2:length(PVarray)
-        PVarray(oi) = PVarray(oi-1) - (x_rj(oi-1)-x_fj(oi-1))/nedisc(oi-1);
+    nedisc = edisc(1:end-i+1); % new economic discount rate for this sim.
+    if t_jmethod
+      PVdiff = sum((x_rj(t_j:end)-x_fj(t_j:end))./nedisc(1:(end-t_j+1))) - ch;
+      PVdiffarray = zeros(1,(length(x_rj)-t_j+1));
+      PVdiffarray(1) = PVdiff;
+      for oi = 2:length(PVdiffarray)
+        PVdiffarray(oi) = PVdiffarray(oi-1) - (x_rj(oi-1)-x_fj(oi-1))/nedisc(oi-1);
       end
 
-      [val, t_j] = max(PVarray);
+      [val, t_j] = max(PVdiffarray);
       if t_j > length(x_fj)
         t_j = length(x_fj);
       end
       if val < 0
         t_j = length(x_fj);
       end
-    else % earliest profitable to develop
-      PVdiff = sum((x_rj(t_j:end)-x_fj(t_j:end))./nedisc(t_j:end)) - ch;
+    else
+      PVdiff = sum((x_rj(t_j:end)-x_fj(t_j:end))./nedisc(1:(end-t_j+1))) - ch;
       while PVdiff <= 0 && t_j <= length(x_fj)
         PVdiff = PVdiff - (x_rj(t_j)-x_fj(t_j))/nedisc(t_j);
         t_j = t_j + 1;
       end
     end
+
     tjs(i) = t_j;
     %fprintf("tj=%d\n",t_j);
     if t_j > 1
@@ -379,7 +380,6 @@ fprintf('\n');
 strcumb = strcumb/godsim; % average over sim rep
 receptacle = {strcumb,t,x,xf,xr,xb,tjs,C,fundt,ben,buy,nenough,ncrinotmet};
 %fprintf("str     mean cumb\n");
-stratstr = {'CVAL','Lc','Hc','Lxf','Hxf','Lxr','Hxr','LE','HE'};
 %for i = 1:length(strcumb)
 %  fprintf("%s       %.2f\n",stratstr{i},strcumb(i));
 %end

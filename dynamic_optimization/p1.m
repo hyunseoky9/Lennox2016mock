@@ -1,5 +1,7 @@
+clear all
+
 msg = 'scenario 5 budget correlated to economy';
-timeline = 800; %10000;
+timeline = 10000;
 %general economy
 a = 0.8;
 x0r = 30;
@@ -7,19 +9,19 @@ xsig2 = 10;
 
 %forestry
 lf = 0.7; %lambda
-af = [1];
+af = [0,1];
 xf0r = 25;
-xfsig2 = 7;
+xfsig2 = 2;
 
 %housing
 lr = 0.7;
-ar = [1];
+ar = [0,1];
 xr0r = 25;
-xrsig2 = 7;
+xrsig2 = 2;
 
 %donation
 lb = 0.7;
-ab = 0.0;
+ab = 0.9;
 xb0r = 25;
 xbsig2 = 2;
 
@@ -27,7 +29,7 @@ xbsig2 = 2;
 al = 1;
 be = 1;
 
-godsimnum = 10;
+godsimnum = 1;
 
 period = 10;
 lag = 0;
@@ -37,7 +39,7 @@ burnin = 201; % burn in first few values of net return as they have not converge
 
 cvalth = 0; % buying threshold for buystrat code 1
 
-simtime = 300; % number of buying opportunities
+simtime = 9500; % number of buying opportunities
 fund = 0; % money saved
 cumb = 0; % cummulative conservation value
 
@@ -55,6 +57,8 @@ ch = 0; % land change cost and option value
 
 b_def = 10; % default b 
 t_jmethod = 1; % 0=earliest time its profitable, 1=time when its most profitable
-intrate = 0.5;
+intrate = 0.0;
 
-code = [12]; % buy strategy stuff
+simver = 2; %1=godinfo 2=perfect info
+code = [2]; % buy strategy stuff
+

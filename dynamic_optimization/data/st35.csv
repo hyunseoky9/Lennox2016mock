@@ -1,0 +1,43 @@
+# scenario 5 plotting
+# timeline: 10000.000
+# a: 0.800
+# x0r: 30.000
+# xsig2: 10.000
+# lf: 0.700
+# af: 1.000
+# xf0r: 25.000
+# xfsig2: 7.000
+# lr: 0.700
+# ar: 1.000
+# xr0r: 25.000
+# xrsig2: 7.000
+# lb: 0.700
+# ab: 0.900
+# xb0r: 25.000
+# xbsig2: 2.000
+# al: 1.000
+# be: 1.000
+# godsimnum: 1.000
+# period: 10.000
+# lag: 0.000
+# A: 1.000
+# burnin: 201.000
+# cvalth: 0.000
+# simtime: 9500.000
+# fund: 0.000
+# cumb: 0.000
+# bfn: 1.000
+# rho: 0.100
+# del: 0.010
+# efmu: 0.000
+# efsig2: 0.000
+# ermu: 0.000
+# ersig2: 0.000
+# ch: 0.000
+# b_def: 10.000
+# t_jmethod: 1.000
+# intrate: 0.000
+# simver: 1.000
+# code: 12.000
+cumb
+615515.47

@@ -1,2 +1,2 @@
-run('./params/p2.m');
+p1;
 main;
