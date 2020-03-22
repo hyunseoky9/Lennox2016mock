@@ -212,7 +212,6 @@ for god = 1:godsim
     %fprintf('time step=%d\n',i);
     
     nxf = xf(i:end);
-    nxb = xb(i:end);
     nxr = xr(i:end);
     %fprintf('length of xb=%d\n',size(xb,2));
     %fprintf('this yrs donation = %.2f\n',xb(1));
