@@ -1,2 +1,4 @@
-p1;
+tic
+p4;
 main;
+toc

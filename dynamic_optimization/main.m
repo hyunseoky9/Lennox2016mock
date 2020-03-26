@@ -14,7 +14,7 @@ paramset = paramsetmaker(parambundle,pname);
 
 iwantplot = 1;
 holdonplot = 0; % when plotting things on a same plot
-what2pl = [17]; % plot index
+what2pl = [11,17]; % plot index
 tjv = [1,3,5,7];
 
 if iwantplot
